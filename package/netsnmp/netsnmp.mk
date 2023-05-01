@@ -43,6 +43,10 @@ NETSNMP_CONFIG_SCRIPTS = net-snmp-config
 # We're patching configure.d/config_project_types
 NETSNMP_AUTORECONF = YES
 
+define NETSNMP_USERS
+	snmp -1 snmp -1 * - - - snmpd user
+endef
+
 ifeq ($(BR2_INIT_SYSTEMD),y)
 NETSNMP_CONF_OPTS += --with-systemd
 else
