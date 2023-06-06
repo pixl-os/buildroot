@@ -56,10 +56,11 @@ endef
 # When network-manager is enabled together with dhcpcd, it will use
 # dhcpcd as a DHCP client, and will be in charge of running, so we
 # don't want the init script or service file to be installed.
+# pixL need change to s10 for network share
 ifeq ($(BR2_PACKAGE_NETWORK_MANAGER),)
 define DHCPCD_INSTALL_INIT_SYSV
 	$(INSTALL) -m 755 -D package/dhcpcd/S41dhcpcd \
-		$(TARGET_DIR)/etc/init.d/S41dhcpcd
+		$(TARGET_DIR)/etc/init.d/S10dhcpcd
 endef
 
 define DHCPCD_INSTALL_INIT_SYSTEMD
