@@ -6,7 +6,16 @@
 # Allow a few customizations from a config file
 test -r /etc/default/dropbear && . /etc/default/dropbear
 
+# pixl improve on off ssh with recalbox.conf option
+systemsetting="recalbox_settings"
+
 start() {
+	enabled="`$systemsetting  -command load -key system.ssh.enabled`"
+	if [ "$enabled" == "0" ];then
+	  echo "SSH services: disabled"
+	  exit 0
+	fi
+
 	DROPBEAR_ARGS="$DROPBEAR_ARGS -R"
 
 	# If /etc/dropbear is a symlink to /var/run/dropbear, and
@@ -33,10 +42,12 @@ start() {
 		--exec /usr/sbin/dropbear -- $DROPBEAR_ARGS
 	[ $? = 0 ] && echo "OK" || echo "FAIL"
 }
+
+# pixl replace[ $? = 0 ] && echo "OK" || echo "FAIL"
 stop() {
 	printf "Stopping dropbear sshd: "
 	start-stop-daemon -K -q -p /var/run/dropbear.pid
-	[ $? = 0 ] && echo "OK" || echo "FAIL"
+	start-stop-daemon -K -q -n dropbear
 }
 restart() {
 	stop
