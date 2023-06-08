@@ -12,6 +12,10 @@ USBMOUNT_LICENSE = BSD-2-Clause
 USBMOUNT_LICENSE_FILES = debian/copyright
 
 define USBMOUNT_INSTALL_TARGET_CMDS
+	# pixl add sed usbmount.conf for many format
+	$(SED) 's|^FILESYSTEMS=.*|FILESYSTEMS="vfat ext2 ext3 ext4 hfsplus ntfs exfat"|g' $(@D)/usbmount.conf
+	$(SED) 's|/media/usb|/recalbox/share/externals/usb|g' $(@D)/usbmount.conf
+	$(SED) 's|/usr/share/usbmount/usbmount|/recalbox/scripts/recalbox-usbmount.sh|g' $(@D)/usbmount.rules
 	$(INSTALL) -m 0755 -D $(@D)/usbmount $(TARGET_DIR)/usr/share/usbmount/usbmount
 
 	$(INSTALL) -m 0755 -D $(@D)/00_create_model_symlink \
@@ -22,7 +26,8 @@ define USBMOUNT_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 0644 -D $(@D)/usbmount.rules $(TARGET_DIR)/lib/udev/rules.d/usbmount.rules
 	$(INSTALL) -m 0644 -D $(@D)/usbmount.conf $(TARGET_DIR)/etc/usbmount/usbmount.conf
 
-	mkdir -p $(addprefix $(TARGET_DIR)/media/usb,0 1 2 3 4 5 6 7)
+	# pixl change dir /media/usb
+	mkdir -p $(addprefix $(TARGET_DIR)/recalbox/share_init/externals/usb,0 1 2 3 4 5 6 7)
 endef
 
 $(eval $(generic-package))
