@@ -113,9 +113,10 @@ define MOSQUITTO_INSTALL_TARGET_CMDS
 endef
 
 ifeq ($(BR2_PACKAGE_MOSQUITTO_BROKER),y)
+# pixL change S50mosquitto to S29mosquitto
 define MOSQUITTO_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 0755 package/mosquitto/S50mosquitto \
-		$(TARGET_DIR)/etc/init.d/S50mosquitto
+		$(TARGET_DIR)/etc/init.d/S29mosquitto
 endef
 
 define MOSQUITTO_INSTALL_INIT_SYSTEMD
