@@ -14,7 +14,9 @@ SDL2_CPE_ID_PRODUCT = simple_directmedia_layer
 SDL2_INSTALL_STAGING = YES
 SDL2_CONFIG_SCRIPTS = sdl2-config
 
+# pixL need pulseaudio and disable-hidapi
 SDL2_CONF_OPTS += \
+	--disable-hidapi \
 	--disable-rpath \
 	--disable-arts \
 	--disable-esd \
@@ -50,6 +52,23 @@ define SDL2_FIX_SDL2_CONFIG_CMAKE
 		$(STAGING_DIR)/usr/lib/cmake/SDL2/sdl2-config.cmake
 endef
 SDL2_POST_INSTALL_STAGING_HOOKS += SDL2_FIX_SDL2_CONFIG_CMAKE
+
+# pixl need Fix SDL2 Configure Path # Batocera
+define SDL2_FIX_CONFIGURE_PATHS
+	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/config.log
+	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/config.status
+	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/libtool
+	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/Makefile
+	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/sdl2-config
+	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/sdl2.pc
+endef
+SDL2_POST_CONFIGURE_HOOKS += SDL2_FIX_CONFIGURE_PATHS
+
+# pixL add run autogen
+define SDL2_RUN_AUTOGEN
+	$(@D)/autogen.sh
+endef
+SDL2_PRE_CONFIGURE_HOOKS += SDL2_RUN_AUTOGEN
 
 # We must enable static build to get compilation successful.
 SDL2_CONF_OPTS += --enable-static
@@ -162,6 +181,14 @@ SDL2_DEPENDENCIES += alsa-lib
 SDL2_CONF_OPTS += --enable-alsa
 else
 SDL2_CONF_OPTS += --disable-alsa
+endif
+
+# pixL need pulseaudio sdl2
+ifeq ($(BR2_PACKAGE_PULSEAUDIO),y)
+SDL2_DEPENDENCIES += pulseaudio
+SDL2_CONF_OPTS += --enable-pulseaudio
+else
+SDL2_CONF_OPTS += --disable-pulseaudio
 endif
 
 ifeq ($(BR2_PACKAGE_SDL2_KMSDRM),y)
