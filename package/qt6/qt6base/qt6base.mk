@@ -8,6 +8,8 @@ QT6BASE_VERSION = $(QT6_VERSION)
 QT6BASE_SITE = $(QT6_SITE)
 QT6BASE_SOURCE = qtbase-$(QT6_SOURCE_TARBALL_PREFIX)-$(QT6BASE_VERSION).tar.xz
 
+QT6BASE_CMAKE_BACKEND = ninja
+
 QT6BASE_LICENSE = \
 	GPL-2.0+ or LGPL-3.0, \
 	GPL-3.0 with exception (tools), \
@@ -29,7 +31,6 @@ QT6BASE_LICENSE_FILES = \
 	LICENSES/Qt-GPL-exception-1.0.txt
 
 QT6BASE_DEPENDENCIES = \
-	host-ninja \
 	host-qt6base \
 	double-conversion \
 	libb2 \
@@ -38,7 +39,6 @@ QT6BASE_DEPENDENCIES = \
 QT6BASE_INSTALL_STAGING = YES
 
 QT6BASE_CONF_OPTS = \
-	-GNinja \
 	-DQT_HOST_PATH=$(HOST_DIR) \
 	-DFEATURE_concurrent=ON \
 	-DFEATURE_xml=OFF \
@@ -81,22 +81,7 @@ QT6BASE_CONF_OPTS += \
 	-DQT_BUILD_TESTS_BY_DEFAULT=OFF \
     -DQT_BUILD_EXAMPLES_BY_DEFAULT=OFF
 
-QT6BASE_POST_CONFIGURE_HOOKS += QT6_INSTALL_QT_CONF
-
-define QT6BASE_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(BR2_CMAKE) --build $(QT6BASE_BUILDDIR)
-endef
-
-define QT6BASE_INSTALL_STAGING_CMDS
-	$(TARGET_MAKE_ENV) DESTDIR=$(STAGING_DIR) $(BR2_CMAKE) --install $(QT6BASE_BUILDDIR)
-endef
-
-define QT6BASE_INSTALL_TARGET_CMDS
-	$(TARGET_MAKE_ENV) DESTDIR=$(TARGET_DIR) $(BR2_CMAKE) --install $(QT6BASE_BUILDDIR)
-endef
-
 HOST_QT6BASE_DEPENDENCIES = \
-	host-ninja \
 	host-double-conversion \
 	host-libb2 \
 	host-pcre2 \
@@ -120,7 +105,7 @@ HOST_QT6BASE_CONF_OPTS = \
 	-DQT_BUILD_TESTS_BY_DEFAULT=OFF \
     -DQT_BUILD_EXAMPLES_BY_DEFAULT=OFF
 
-# batocera disable opengl when building host-qt6base
+# pixL disable opengl when building host-qt6base
 HOST_QT6BASE_CONF_OPTS += \
 	-DINPUT_opengl=no
 
