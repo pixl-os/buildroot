@@ -2,6 +2,7 @@
 
 # Pass -r to qemu-user as to trick glibc into not errorings out if the host kernel
 # is older than the target kernel.
+# pixl need specifique LD_LIBRARY_PATH for build docker
 exec @QEMU_USER@ -r @TOOLCHAIN_HEADERS_VERSION@ \
     @QEMU_USERMODE_ARGS@ \
    -L "${STAGING_DIR}/" \
