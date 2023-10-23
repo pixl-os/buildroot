@@ -104,7 +104,8 @@ QT5WEBENGINE_CONF_OPTS += \
 	-feature-webengine-system-nss \
 	-feature-webengine-system-png \
 	-feature-webengine-system-snappy \
-	-feature-webengine-system-zlib
+	-feature-webengine-system-zlib \
+	-feature-webengine-noexecstack
 
 QT5WEBENGINE_CONF_OPTS += \
 	-no-webengine-geolocation \
@@ -117,7 +118,6 @@ QT5WEBENGINE_CONF_OPTS += \
 	-no-feature-webengine-developer-build \
 	-no-feature-webengine-full-debug-info \
 	-no-feature-webengine-native-spellchecker \
-	-no-feature-webengine-noexecstack \
 	-no-feature-webengine-system-minizip \
 	-no-feature-webengine-system-gn
 
