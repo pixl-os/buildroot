@@ -3,8 +3,11 @@
 # qt5webengine-chromium
 #
 ################################################################################
-
-QT5WEBENGINE_CHROMIUM_VERSION = 0ad2814370799a2161057d92231fe3ee00e2fe98
+# Version bumped for QT5 WEBENGINE as identified on following repo using 5.15.10 tags:
+# https://invent.kde.org/qt/qt/qtwebengine/-/tree/v5.15.10-lts/
+# and the third-party module commit linked:
+# https://invent.kde.org/qt/qt/qtwebengine-chromium/-/tree/caba2fcb0fe8a8d213c4c79d26da3bb88eee61c7/
+QT5WEBENGINE_CHROMIUM_VERSION = caba2fcb0fe8a8d213c4c79d26da3bb88eee61c7
 QT5WEBENGINE_CHROMIUM_SITE = $(QT5_SITE)/qtwebengine-chromium/-/archive/$(QT5WEBENGINE_CHROMIUM_VERSION)
 QT5WEBENGINE_CHROMIUM_SOURCE = qtwebengine-chromium-$(QT5WEBENGINE_CHROMIUM_VERSION).tar.bz2
 QT5WEBENGINE_CHROMIUM_PATCH_DEPENDENCIES = qt5webengine-chromium-catapult
