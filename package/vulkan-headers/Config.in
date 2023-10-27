@@ -1,5 +1,8 @@
 config BR2_PACKAGE_VULKAN_HEADERS
 	bool "vulkan-headers"
+	depends on BR2_PACKAGE_VULKAN_TOOLS
+	depends on BR2_PACKAGE_VULKAN_LOADER
+	depends on BR2_PACKAGE_VULKAN_SAMPLES
 	help
 	  The Khronos official Vulkan header files and API
 	  registry.
