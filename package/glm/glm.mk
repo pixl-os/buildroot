@@ -17,7 +17,7 @@ GLM_INSTALL_TARGET = NO
 # Don't build libraries as GLM is header-only
 GLM_CONF_OPTS = \
 	-DGLM_TEST_ENABLE=OFF \
-	-DBUILD_SHARED_LIBS=OFF \
+	-DBUILD_SHARED_LIBS=ON \
 	-DBUILD_STATIC_LIBS=OFF
 
 $(eval $(cmake-package))
