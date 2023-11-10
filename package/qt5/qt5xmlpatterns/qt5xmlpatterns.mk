@@ -12,6 +12,11 @@ QT5XMLPATTERNS_LICENSE = GPL-2.0+ or LGPL-3.0, GPL-3.0 with exception(tools), GF
 QT5XMLPATTERNS_LICENSE_FILES = LICENSE.GPL2 LICENSE.GPL3 LICENSE.GPL3-EXCEPT LICENSE.LGPL3 LICENSE.FDL
 QT5XMLPATTERNS_SYNC_QT_HEADERS = YES
 
+#added here to force build of pegasus after QT5 build if requested (to avoid qmake issue with qt6 package build after)
+ifeq ($(BR2_PACKAGE_PEGASUS),y)
+QT5XMLPATTERNS_DEPENDENCIES += pegasus
+endif
+
 ifeq ($(BR2_PACKAGE_QT5DECLARATIVE),y)
 QT5XMLPATTERNS_DEPENDENCIES += qt5declarative
 endif
