@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SDL2_VERSION = 2.28.4
+SDL2_VERSION = 2.28.5
 SDL2_SOURCE = SDL2-$(SDL2_VERSION).tar.gz
 SDL2_SITE = http://www.libsdl.org/release
 SDL2_LICENSE = Zlib
@@ -14,21 +14,18 @@ SDL2_CPE_ID_PRODUCT = simple_directmedia_layer
 SDL2_INSTALL_STAGING = YES
 SDL2_CONFIG_SCRIPTS = sdl2-config
 
-# pixL need pulseaudio and disable-hidapi
 SDL2_CONF_OPTS += \
 	--disable-hidapi \
 	--disable-rpath \
 	--disable-arts \
 	--disable-esd \
 	--disable-dbus \
-	--disable-pulseaudio \
 	--disable-video-vivante \
 	--disable-video-cocoa \
 	--disable-video-metal \
 	--disable-video-wayland \
 	--disable-video-dummy \
 	--disable-video-offscreen \
-	--disable-video-vulkan \
 	--disable-ime \
 	--disable-ibus \
 	--disable-fcitx \
@@ -52,19 +49,6 @@ define SDL2_FIX_SDL2_CONFIG_CMAKE
 		$(STAGING_DIR)/usr/lib/cmake/SDL2/sdl2-config.cmake
 endef
 SDL2_POST_INSTALL_STAGING_HOOKS += SDL2_FIX_SDL2_CONFIG_CMAKE
-
-# pixl need Fix SDL2 Configure Path # Batocera
-define SDL2_FIX_CONFIGURE_PATHS
-	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/config.log
-	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/config.status
-	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/libtool
-	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/Makefile
-	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/sdl2-config
-	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/sdl2.pc
-endef
-SDL2_POST_CONFIGURE_HOOKS += SDL2_FIX_CONFIGURE_PATHS
-
-# pixL add run autogen
 define SDL2_RUN_AUTOGEN
 	$(@D)/autogen.sh
 endef
@@ -193,7 +177,6 @@ else
 SDL2_CONF_OPTS += --disable-alsa
 endif
 
-# pixL need pulseaudio sdl2
 ifeq ($(BR2_PACKAGE_PULSEAUDIO),y)
 SDL2_DEPENDENCIES += pulseaudio
 SDL2_CONF_OPTS += --enable-pulseaudio
@@ -201,11 +184,29 @@ else
 SDL2_CONF_OPTS += --disable-pulseaudio
 endif
 
+ifeq ($(BR2_PACKAGE_RECALBOX_HAS_VULKAN),y)
+SDL2_DEPENDENCIES += vulkan-headers
+SDL2_CONF_OPTS += --enable-video-vulkan
+else
+SDL2_CONF_OPTS += --disable-video-vulkan
+endif
+
 ifeq ($(BR2_PACKAGE_SDL2_KMSDRM),y)
 SDL2_DEPENDENCIES += libdrm libgbm libegl
 SDL2_CONF_OPTS += --enable-video-kmsdrm
 else
 SDL2_CONF_OPTS += --disable-video-kmsdrm
+endif
+
+ifeq ($(BR2_PACKAGE_XSERVER_XORG_SERVER),)
+  ifeq ($(BR2_PACKAGE_MESA3D_OPENGL_EGL),y)
+    TARGET_CFLAGS += -DEGL_NO_X11
+  endif
+endif
+
+# odroid go advance
+ifeq ($(BR2_PACKAGE_LIBRGA),y)
+SDL2_DEPENDENCIES += librga
 endif
 
 $(eval $(autotools-package))
