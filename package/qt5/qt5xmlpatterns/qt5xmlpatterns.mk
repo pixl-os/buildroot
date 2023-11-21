@@ -29,4 +29,12 @@ ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_90620),y)
 QT5XMLPATTERNS_CONF_OPTS += "QMAKE_CXXFLAGS+=-O0"
 endif
 
+# Fix to have /usr/qml directories/files  to /usr/qml/qt5 as requested
+define QT5XMLPATTERNS_QT5QMLMOVE
+	mv $(TARGET_DIR)/usr/qml $(TARGET_DIR)/usr/qt5
+	mkdir -p $(TARGET_DIR)/usr/qml
+	mv -f $(TARGET_DIR)/usr/qt5 $(TARGET_DIR)/usr/qml/qt5
+endef
+QT5XMLPATTERNS_POST_INSTALL_TARGET_HOOKS += QT5XMLPATTERNS_QT5QMLMOVE
+
 $(eval $(qmake-package))
