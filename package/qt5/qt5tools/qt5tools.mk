@@ -59,7 +59,7 @@ endef
 
 define QT5TOOLS_INSTALL_TARGET_CMDS
 	$(foreach p,$(QT5TOOLS_INSTALL_TARGET_y), \
-		$(INSTALL) -D -m0755 $(@D)/bin/$(p) $(TARGET_DIR)/usr/bin/$(p)$(sep))
+		$(INSTALL) -D -m0755 $(@D)/bin/$(p) $(TARGET_DIR)/usr/bin/qt5/$(p)$(sep))
 endef
 
 $(eval $(qmake-package))
