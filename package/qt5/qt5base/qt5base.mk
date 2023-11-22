@@ -39,8 +39,7 @@ QT5BASE_CONFIGURE_OPTS += \
 	-system-zlib \
 	-system-pcre \
 	-no-pch \
-	-shared \
-	-no-feature-relocatable
+	-shared
 
 # starting from version 5.9.0, -optimize-debug is enabled by default
 # for debug builds and it overrides -O* with -Og which is not what we
@@ -362,8 +361,11 @@ define QT5BASE_CONFIGURE_CMDS
 		-hostprefix $(HOST_DIR) \
 		-headerdir /usr/include/qt5 \
 		-sysroot $(STAGING_DIR) \
-		-plugindir /usr/lib/qt/plugins \
-		-examplesdir /usr/lib/qt/examples \
+		-plugindir /usr/lib/qt5/plugins \
+		-examplesdir /usr/lib/qt5/examples \
+		-qmldir /usr/qml/qt5 \
+		-bindir /usr/bin/qt5 \
+		-translationdir /usr/translations/qt5 \
 		-no-rpath \
 		-nomake tests \
 		-device buildroot \
