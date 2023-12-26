@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SDL2_VERSION = 2.28.4
+SDL2_VERSION = 2.28.5
 SDL2_SOURCE = SDL2-$(SDL2_VERSION).tar.gz
 SDL2_SITE = http://www.libsdl.org/release
 SDL2_LICENSE = Zlib
@@ -28,7 +28,6 @@ SDL2_CONF_OPTS += \
 	--disable-video-wayland \
 	--disable-video-dummy \
 	--disable-video-offscreen \
-	--disable-video-vulkan \
 	--disable-ime \
 	--disable-ibus \
 	--disable-fcitx \
@@ -184,6 +183,13 @@ SDL2_CONF_OPTS += \
 	--disable-video-opengles \
 	--disable-video-opengles1 \
 	--disable-video-opengles2
+endif
+
+ifeq ($(BR2_PACKAGE_VULKAN_HEADERS),y)
+SDL2_DEPENDENCIES += vulkan-headers
+SDL2_CONF_OPTS += --enable-video-vulkan
+else
+SDL2_CONF_OPTS += --disable-video-vulkan
 endif
 
 ifeq ($(BR2_PACKAGE_ALSA_LIB),y)
