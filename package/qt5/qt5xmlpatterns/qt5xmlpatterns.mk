@@ -17,6 +17,11 @@ ifeq ($(BR2_PACKAGE_PEGASUS),y)
 QT5XMLPATTERNS_DEPENDENCIES += pegasus
 endif
 
+# Added dolphin-triforce to force use qt5 on qt6.6.1 update (to avoid qmake issue with qt6 package build after)
+ifeq ($(BR2_PACKAGE_DOLPHIN_TRIFORCE),y)
+QT5XMLPATTERNS_DEPENDENCIES += dolphin-triforce
+endif
+
 ifeq ($(BR2_PACKAGE_QT5DECLARATIVE),y)
 QT5XMLPATTERNS_DEPENDENCIES += qt5declarative
 endif
