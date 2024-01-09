@@ -16,6 +16,13 @@ LLVM_INSTALL_STAGING = YES
 HOST_LLVM_DEPENDENCIES = host-python3 host-llvm-cmake
 LLVM_DEPENDENCIES = host-llvm
 
+# pixL Patch for take CMakePolicy.cmake into /host/lib/cmake/llvm
+define LLVM_CMAKELIST_FIX_POLICY
+	sed -i -r '6s|.*/Modules/CMakePolicy.cmake.*|include($(HOST_DIR)/lib/cmake/llvm/CMakePolicy.cmake|g' $(@D)/CMakeLists.txt
+endef
+HOST_LLVM_PRE_CONFIGURE_HOOKS = LLVM_CMAKELIST_FIX_POLICY
+LLVM_PRE_CONFIGURE_HOOKS= LLVM_CMAKELIST_FIX_POLICY
+
 # Path to cmake modules from host-llvm-cmake
 HOST_LLVM_CONF_OPTS += -DCMAKE_MODULE_PATH=$(HOST_DIR)/lib/cmake/llvm
 LLVM_CONF_OPTS += -DCMAKE_MODULE_PATH=$(HOST_DIR)/lib/cmake/llvm
