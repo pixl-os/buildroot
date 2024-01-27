@@ -119,7 +119,7 @@ QT5WEBENGINE_CONF_OPTS += \
 	-no-webengine-pepper-plugins \
 	-no-webengine-printing-and-pdf \
 	-no-webengine-spellchecker \
-	-no-webengine-webrtc \
+	-webengine-webrtc \
 	-no-webengine-webrtc-pipewire \
 	-no-feature-webengine-developer-build \
 	-no-feature-webengine-full-debug-info \
