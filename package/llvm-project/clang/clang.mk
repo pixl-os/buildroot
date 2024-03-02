@@ -30,6 +30,17 @@ CLANG_DEPENDENCIES = llvm host-clang
 HOST_CLANG_CONF_OPTS += -DBUILD_SHARED_LIBS=OFF
 CLANG_CONF_OPTS += -DBUILD_SHARED_LIBS=OFF
 
+# pixL don'nt need gtest disable for clang
+HOST_CLANG_CONF_OPTS += -DLLVM_INCLUDE_TESTS=OFF
+CLANG_CONF_OPTS += -DLLVM_INCLUDE_TESTS=OFF
+
+# pixL Patch for take CMakePolicy.cmake into /host/lib/cmake/llvm
+define CLANG_CMAKELIST_FIX_POLICY
+	sed -i -r '6s|.*/Modules/CMakePolicy.cmake.*|include($(HOST_DIR)/lib/cmake/llvm/CMakePolicy.cmake|g' $(@D)/CMakeLists.txt
+endef
+HOST_CLANG_PRE_CONFIGURE_HOOKS = CLANG_CMAKELIST_FIX_POLICY
+CLANG_PRE_CONFIGURE_HOOKS= CLANG_CMAKELIST_FIX_POLICY
+
 # Default is Debug build, which requires considerably more disk space
 # and build time. Release build is selected for host and target
 # because the linker can run out of memory in Debug mode.
