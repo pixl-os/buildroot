@@ -361,6 +361,10 @@ GST1_PLUGINS_GOOD_DEPENDENCIES += qt5declarative
 ifeq ($(BR2_PACKAGE_QT5BASE_XCB),y)
 GST1_PLUGINS_GOOD_DEPENDENCIES += qt5x11extras
 endif
+#added here to force build of QT5TOOLS
+ifeq ($(BR2_PACKAGE_QT5TOOLS),y)
+GST1_PLUGINS_GOOD_DEPENDENCIES += qt5tools
+endif
 else
 GST1_PLUGINS_GOOD_CONF_OPTS += -Dqt5=disabled
 endif
