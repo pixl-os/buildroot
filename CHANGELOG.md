@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file (focus on change done on pixL-master branch).
 
+## [pixL-master] - 2024-mm-dd - v2024.02.1
+- update:
+	- sdl2 2.28.4 -> 2.28.5
+	- fmt 10.1.1 -> 10.2.1
+
+- fixes:
+	- fix glm: dbuild_library=off	#à vérif
+
 ## [pixL-master] - 2024-mm-dd - v2023.08.2
 - new features:
 	- active support for gpu and igpu amd vulkan api
