@@ -1,20 +1,6 @@
-From 1ab4b8b448f87167d512222e0de92c0fb2e73b0e Mon Sep 17 00:00:00 2001
-From: Christian Stewart <christian@paral.in>
-Date: Fri, 12 Mar 2024 00:41:13 -0700
-Subject: [PATCH] Make.common: use environment variables for toolchain
-
-Use the environment specified CC, LD, etc.
-
-Signed-off-by: Christian Stewart <christian@paral.in>
----
- Make.common | 30 ------------------------------
- 1 file changed, 30 deletions(-)
-
-diff --git a/Make.common b/Make.common
-index 95a3a97..62c1059 100644
---- a/Make.common
-+++ b/Make.common
-@@ -17,19 +17,6 @@
+--- a/Make.common	2024-04-06 19:05:14.000000000 +0200
++++ b/Make.common	2024-04-24 19:05:18.600020111 +0200
+@@ -17,33 +17,6 @@
  # used to compile rEFInd....
  #
  
@@ -23,18 +9,32 @@ index 95a3a97..62c1059 100644
 -EFILIB          = /usr/lib
 -EFICRT0         = /usr/lib
 -
+-# Below are good for compiling with Fedora on x86-64....
+-#EFIINC          = /usr/include/efi
+-#GNUEFILIB       = /usr/lib64
+-#EFILIB          = /usr/lib64
+-#EFICRT0         = /usr/lib64/gnuefi
+-
 -# Comment out above and uncomment below if using locally-compiled GNU-EFI....
 -#EFIINC          = /usr/local/include/efi
 -#GNUEFILIB       = /usr/local/lib
 -#EFILIB          = /usr/local/lib
 -#EFICRT0         = /usr/local/lib
 -
+-# Does GNU-EFI support --target=efi-app-aarch64 with objcopy?
+-# This support appeared in GNU-EFI 3.0.17, so set this to "y" if using that
+-# version or later and compiling for ARM64; but set it to "n" if using an
+-# earlier version of GNU-EFI on ARM64. This option has no effect on IA32/x86
+-# or X64/AMD64/x86-64 systems.
+-GNUEFI_ARM64_TARGET_SUPPORT ?= n
+-
 -HOSTARCH        = $(shell uname -m | sed s,i[3456789]86,ia32,)
 -ARCH            ?= $(HOSTARCH)
- 
+-
  # Pointer to SBAT .csv file. First is default; uncomment second (or make your
  # your own) if you build your own binary. If you make changes and build your
-@@ -39,22 +26,6 @@
+ # own binary, creating your own file is the best practice.
+@@ -52,22 +25,6 @@
  
  # Note: TIANOBASE is defined in master Makefile and exported
  GENFW           = $(TIANOBASE)/BaseTools/Source/C/bin/GenFw
