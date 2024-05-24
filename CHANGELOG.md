@@ -1,7 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file (focus on change done on pixL-master branch).
 
-## [pixl-2023.08.2-base] - 2024-03-05
+## [pixl-2023.08.2-base] - 2024-08-05
+	- new features:
+		- add refind packacke on boot
+		- bump/patch version 0.14.0.2 to 0.14.2
+
+## [pixl-2023.08.2-base] - 2024-03-05 (pixL-Beta35)
 - new features:
 	- active support for gpu and igpu amd vulkan api
 
