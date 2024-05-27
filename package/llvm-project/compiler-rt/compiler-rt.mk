@@ -18,15 +18,22 @@ COMPILER_RT_INSTALL_TARGET = NO
 
 # pixL Patch for take CMakePolicy.cmake into /host/lib/cmake/llvm
 define COMPILER_RT_CMAKELIST_FIX_POLICY
-	sed -i -r '9s|.*/Modules/CMakePolicy.cmake.*|include($(HOST_DIR)/lib/cmake/llvm/CMakePolicy.cmake|g' $(@D)/CMakeLists.txt
+	sed -i -r '11s|/Modules/CMakePolicy.cmake|/CMakePolicy.cmake|g' $(@D)/CMakeLists.txt
 endef
-COMPILER_RT_PRE_CONFIGURE_HOOKS= COMPILER_RT_CMAKELIST_FIX_POLICY
+COMPILER_RT_PRE_CONFIGURE_HOOKS = COMPILER_RT_CMAKELIST_FIX_POLICY
+
+define COMPILER_RT_CMAKELIST_FIX_POLICY_PATH
+	mkdir -p $(HOST_DIR)/lib/cmake/llvm/Modules
+	ln -sf $(HOST_DIR)/lib/cmake/llvm/CMakePolicy.cmake $(HOST_DIR)/lib/cmake/llvm/Modules/CMakePolicy.cmake
+endef
+COMPILER_RT_PRE_CONFIGURE_HOOKS += COMPILER_RT_CMAKELIST_FIX_POLICY_PATH
 
 COMPILER_RT_CONF_OPTS=-DCOMPILER_RT_STANDALONE_BUILD=OFF \
 	-DCOMPILER_RT_STANDALONE_BUILD=ON \
 	-DCOMPILER_RT_DEFAULT_TARGET_TRIPLE=$(GNU_TARGET_NAME) \
 	-DLLVM_CONFIG_PATH=$(HOST_DIR)/bin/llvm-config \
-	-DCMAKE_MODULE_PATH=$(HOST_DIR)/lib/cmake/llvm
+	-DCMAKE_MODULE_PATH=$(HOST_DIR)/lib/cmake/llvm \
+	-DLLVM_COMMON_CMAKE_UTILS=$(HOST_DIR)/lib/cmake/llvm
 
 # The installation of the target runtime libraries defaults to DESTDIR, however
 # host-clang resources directory needs a link so Clang can find the runtime
