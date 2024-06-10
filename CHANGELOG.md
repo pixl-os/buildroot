@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file (focus on change done on pixL-master branch).
 
+## [pixl-2023.08.2-base] - 2024-mm-dd
+- update :
+	- add vulkan-headers 1.3.270 -> 1.3.273
+
 ## [pixl-2023.08.2-base] - 2024-08-05
 	- new features:
 		- add refind packacke on boot
