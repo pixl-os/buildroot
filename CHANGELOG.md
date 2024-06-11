@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file (focus on ch
 - update :
 	- add vulkan-headers 1.3.270 -> 1.3.273
 
+- new features:
+	- add spirv-headers 1.3.268.0
+	- add spirv-tools 1.3.268.0
+
 ## [pixl-2023.08.2-base] - 2024-08-05
 	- new features:
 		- add refind packacke on boot
