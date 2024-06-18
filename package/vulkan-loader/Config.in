@@ -4,7 +4,6 @@ config BR2_PACKAGE_VULKAN_LOADER
 	depends on !BR2_STATIC_LIBS # dlfcn.h
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_VULKAN_HEADERS
-	select BR2_PACKAGE_VULKAN_TOOLS
 	help
 	  The Khronos official Vulkan ICD desktop loader.
 
