@@ -10,14 +10,13 @@ BLUEZ5_UTILS_SOURCE = bluez-$(BLUEZ5_UTILS_VERSION).tar.xz
 BLUEZ5_UTILS_SITE = $(BR2_KERNEL_MIRROR)/linux/bluetooth
 # 0001-configure.ac-Fix-disable-cups.patch
 # 0002-configure.ac-fix-sixaxis-build-without-tools.patch
+# pixl need auto reconf for default conf
 BLUEZ5_UTILS_AUTORECONF = YES
 BLUEZ5_UTILS_INSTALL_STAGING = YES
 BLUEZ5_UTILS_LICENSE = GPL-2.0+, LGPL-2.1+
 BLUEZ5_UTILS_LICENSE_FILES = COPYING COPYING.LIB
 BLUEZ5_UTILS_CPE_ID_VENDOR = bluez
 BLUEZ5_UTILS_CPE_ID_PRODUCT = bluez
-# pixl need auto reconf for default conf 
-BLUEZ5_UTILS_AUTORECONF = YES
 
 BLUEZ5_UTILS_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_BLUEZ5_UTILS_HEADERS),bluez5_utils-headers) \
@@ -201,18 +200,18 @@ else
 BLUEZ5_UTILS_CONF_OPTS += --disable-systemd
 endif
 
-# pixL need default intall conf in etc/bluetooth
-define BLUEZ5_UTILS_INSTALL_CONF_FILES
-	mkdir -p $(TARGET_DIR)/etc/bluetooth
-	for i in `find $(@D) -name *.conf` ; do \
-		$(INSTALL) -D -m 755 $$i $(TARGET_DIR)/etc/bluetooth/ ; \
-	done
-endef
-BLUEZ5_UTILS_POST_INSTALL_TARGET_HOOKS += BLUEZ5_UTILS_INSTALL_CONF_FILES
-
 define BLUEZ5_UTILS_INSTALL_INIT_SYSV
 	$(INSTALL) -m 0755 -D package/bluez5_utils/S40bluetoothd \
 		$(TARGET_DIR)/etc/init.d/S40bluetoothd
 endef
+
+# pixL need default intall conf in etc/bluetooth
+# define BLUEZ5_UTILS_INSTALL_CONF_FILES
+# 	mkdir -p $(TARGET_DIR)/etc/bluetooth
+# 	for i in `find $(@D) -name *.conf` ; do \
+# 		$(INSTALL) -D $$i ; \
+# 	done > $(TARGET_DIR)/etc/bluetooth/
+# endef
+# BLUEZ5_UTILS_POST_INSTALL_TARGET_HOOKS += BLUEZ5_UTILS_INSTALL_CONF_FILES
 
 $(eval $(autotools-package))
