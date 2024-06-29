@@ -30,7 +30,7 @@ CLANG_DEPENDENCIES = llvm host-clang
 HOST_CLANG_CONF_OPTS += -DBUILD_SHARED_LIBS=OFF
 CLANG_CONF_OPTS += -DBUILD_SHARED_LIBS=OFF
 
-# pixL don'nt need gtest disable for clang
+# pixL don't need gtest disable for clang
 HOST_CLANG_CONF_OPTS += -DLLVM_INCLUDE_TESTS=OFF
 CLANG_CONF_OPTS += -DLLVM_INCLUDE_TESTS=OFF
 

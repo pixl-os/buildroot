@@ -57,7 +57,7 @@ define QT5TOOLS_INSTALL_STAGING_CMDS
 	$(foreach p,$(QT5TOOLS_INSTALL_STAGING_DIR_y), \
 		$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/src/$(p) install$(sep))
 endef
-
+# pixL modification
 define QT5TOOLS_INSTALL_TARGET_CMDS
 	$(foreach p,$(QT5TOOLS_INSTALL_TARGET_y), \
 		$(INSTALL) -D -m0755 $(@D)/bin/$(p) $(TARGET_DIR)/usr/bin/qt5/$(p)$(sep))

@@ -4,7 +4,7 @@ config BR2_PACKAGE_QT6BASE
 	select BR2_PACKAGE_LIBB2
 	select BR2_PACKAGE_PCRE2
 	select BR2_PACKAGE_PCRE2_16
-	# batocera fix qt6.5 build failing if not PCRE2_32 selected	
+	# pixL fix qt6.5 build failing if not PCRE2_32 selected	
 	select BR2_PACKAGE_PCRE2_32
 	select BR2_PACKAGE_ZLIB
 	help
@@ -58,7 +58,7 @@ config BR2_PACKAGE_QT6BASE_VULKAN
 config BR2_PACKAGE_QT6BASE_LINUXFB
 	bool "linuxfb support"
 
-# batocera - add the cursor
+# pixL - add the cursor
 config BR2_PACKAGE_QT6BASE_XCB
 	bool "X.org XCB support"
 	depends on BR2_PACKAGE_XORG7

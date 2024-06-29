@@ -24,7 +24,7 @@ comment "qt6 needs a toolchain w/ C++, threads, wchar, dynamic library, gcc >= 8
 		!BR2_HOST_GCC_AT_LEAST_8 || !BR2_TOOLCHAIN_HAS_THREADS || \
 		BR2_STATIC_LIBS || !BR2_USE_WCHAR
 
-# batocera - allow QT5 & QT6 to co-exist...
+# pixL - allow QT5 & QT6 to co-exist...
 menuconfig BR2_PACKAGE_QT6
 	bool "Qt6"
 	depends on BR2_INSTALL_LIBSTDCPP
@@ -43,7 +43,7 @@ menuconfig BR2_PACKAGE_QT6
 	  http://qt.io
 
 if BR2_PACKAGE_QT6
-
+# pixL modification
 source "package/qt6/qt6base/Config.in"
 source "package/qt6/qt6core5compat/Config.in"
 source "package/qt6/qt6declarative/Config.in"

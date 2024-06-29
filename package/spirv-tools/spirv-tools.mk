@@ -20,7 +20,6 @@ SPIRV_TOOLS_CONF_OPTS = \
 
 # pixL - add host
 HOST_SPIRV_TOOLS_DEPENDENCIES = host-spirv-headers
-# pixL - add host
 HOST_SPIRV_TOOLS_CONF_OPTS = \
 	-DSPIRV-Headers_SOURCE_DIR=$(HOST_DIR)/usr \
 	-DSPIRV_TOOLS_BUILD_STATIC=OFF \
@@ -28,5 +27,4 @@ HOST_SPIRV_TOOLS_CONF_OPTS = \
 	-DSPIRV_WERROR=OFF
 
 $(eval $(cmake-package))
-# pixL - add host
 $(eval $(host-cmake-package))

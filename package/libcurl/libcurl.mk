@@ -202,6 +202,7 @@ endef
 LIBCURL_POST_INSTALL_TARGET_HOOKS += LIBCURL_TARGET_CLEANUP
 endif
 
+# pixL modification
 HOST_LIBCURL_DEPENDENCIES = host-openssl
 HOST_LIBCURL_CONF_OPTS = \
 	--disable-manual \

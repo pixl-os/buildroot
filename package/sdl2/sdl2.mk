@@ -52,7 +52,7 @@ define SDL2_FIX_SDL2_CONFIG_CMAKE
 endef
 SDL2_POST_INSTALL_STAGING_HOOKS += SDL2_FIX_SDL2_CONFIG_CMAKE
 
-# pixl need Fix SDL2 Configure Path # Batocera
+# pixL need Fix SDL2 Configure Path
 define SDL2_FIX_CONFIGURE_PATHS
 	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/config.log
 	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/config.status

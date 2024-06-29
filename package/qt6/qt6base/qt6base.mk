@@ -40,6 +40,7 @@ QT6BASE_DEPENDENCIES = \
 	zlib
 QT6BASE_INSTALL_STAGING = YES
 
+# pixL modification
 QT6BASE_CONF_OPTS = \
 	-DQT_HOST_PATH=$(HOST_DIR) \
 	-DFEATURE_concurrent=ON \
@@ -82,6 +83,9 @@ QT6BASE_CONF_OPTS += \
 	-DFEATURE_vaes=OFF \
 	-DQT_BUILD_TESTS_BY_DEFAULT=OFF \
     -DQT_BUILD_EXAMPLES_BY_DEFAULT=OFF
+
+# pixL modification
+QT6BASE_POST_CONFIGURE_HOOKS += QT6_INSTALL_QT_CONF
 
 HOST_QT6BASE_DEPENDENCIES = \
 	host-double-conversion \
@@ -163,7 +167,7 @@ else
 QT6BASE_CONF_OPTS += -DFEATURE_linuxfb=OFF
 endif
 
-# batocera - add xinput
+# pixL - add xinput
 ifeq ($(BR2_PACKAGE_QT6BASE_XCB),y)
 QT6BASE_CONF_OPTS += \
 	-DFEATURE_xcb=ON \
@@ -171,7 +175,7 @@ QT6BASE_CONF_OPTS += \
 	-DFEATURE_xkbcommon=ON \
 	-DFEATURE_xkbcommon_x11=ON \
 	-DFEATURE_system_xcb_xinput=ON
-# batocera - add cursor
+# pixL - add cursor
 QT6BASE_DEPENDENCIES += \
 	libxcb \
 	libxkbcommon \

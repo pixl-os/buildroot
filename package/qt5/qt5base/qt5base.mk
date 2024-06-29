@@ -33,6 +33,7 @@ QT5BASE_IGNORE_CVES += CVE-2022-25634
 #  * -no-feature-relocatable to work around path mismatch
 #     while searching qml files and buildroot BR2_ROOTFS_MERGED_USR
 #     feature enabled
+# pixL modification
 QT5BASE_CONFIGURE_OPTS += \
 	-optimized-qmake \
 	-no-iconv \

@@ -361,6 +361,8 @@ GST1_PLUGINS_GOOD_DEPENDENCIES += qt5declarative qt5tools
 ifeq ($(BR2_PACKAGE_QT5BASE_XCB),y)
 GST1_PLUGINS_GOOD_DEPENDENCIES += qt5x11extras
 endif
+
+# pixL modification
 #added here to force build of QT5TOOLS
 ifeq ($(BR2_PACKAGE_QT5TOOLS),y)
 GST1_PLUGINS_GOOD_DEPENDENCIES += qt5tools

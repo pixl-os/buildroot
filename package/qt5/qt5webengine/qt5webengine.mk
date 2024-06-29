@@ -84,6 +84,7 @@ QT5WEBENGINE_DEPENDENCIES += \
 	snappy \
 	webp
 
+# pixL modification
 QT5WEBENGINE_CONF_OPTS += \
 	-webengine-embedded-build \
 	-webengine-ffmpeg \
@@ -157,6 +158,7 @@ define QT5WEBENGINE_CREATE_HOST_PYTHON_WRAPPER
 endef
 QT5WEBENGINE_PRE_CONFIGURE_HOOKS += QT5WEBENGINE_CREATE_HOST_PYTHON_WRAPPER
 
+# pixL modification
 define QT5WEBENGINE_FIX_PYTHON_REGEX
 	$(SED) 's/\^(?i)/(?i)\^/' $(@D)/src/3rdparty/chromium/tools/metrics/ukm/ukm_model.py
 	$(SED) "s|'rU'|'r'|g" $(@D)/src/3rdparty/chromium/tools/grit/grit/util.py

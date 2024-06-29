@@ -13,6 +13,7 @@ include $(sort $(wildcard package/qt6/*/*.mk))
 
 # The file "qt.conf" can be used to override the hard-coded paths especially by QT5
 # we have to remove it to avoid issues in case of QT6
+# pixL modification
 define QT6_INSTALL_QT_CONF
 	rm -f $(HOST_DIR)/bin/qt.conf
 endef
