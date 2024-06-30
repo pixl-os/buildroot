@@ -1,0 +1,18 @@
+--- a/configure	2024-04-05 01:22:59.000000000 +0200
++++ b/configure	2024-06-30 14:19:50.164033703 +0200
+@@ -2293,6 +2293,7 @@
+     opencv2_core_core_c_h
+     OpenGL_gl3_h
+     poll_h
++    sys_auxv_h
+     pthread_np_h
+     sys_param_h
+     sys_resource_h
+@@ -6612,6 +6613,7 @@
+ check_func_headers VideoToolbox/VideoToolbox.h VTPixelRotationSessionCreate -framework VideoToolbox
+ check_headers windows.h
+ check_headers asm/types.h
++check_headers sys/auxv.h
+ 
+ # it seems there are versions of clang in some distros that try to use the
+ # gcc headers, which explodes for stdatomic
