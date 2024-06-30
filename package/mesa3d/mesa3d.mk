@@ -4,8 +4,10 @@
 #
 ################################################################################
 
+# pixL modification - patch 5 not needed
 # When updating the version, please also update mesa3d-headers
-MESA3D_VERSION = 24.0.7
+# also update glslang to the latest stable version
+MESA3D_VERSION = 24.1.2
 MESA3D_SOURCE = mesa-$(MESA3D_VERSION).tar.xz
 MESA3D_SITE = https://archive.mesa3d.org
 MESA3D_LICENSE = MIT, SGI, Khronos
@@ -24,6 +26,11 @@ MESA3D_DEPENDENCIES = \
 	expat \
 	libdrm \
 	zlib
+
+# pixL
+ifeq ($(BR2_PACKAGE_DIRECTX_HEADERS),y)
+MESA3D_DEPENDENCIES += directx-headers
+endif
 
 MESA3D_CONF_OPTS = \
 	-Dgallium-omx=disabled \
@@ -110,12 +117,36 @@ MESA3D_GALLIUM_DRIVERS-$(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_TEGRA)    += tegra
 MESA3D_GALLIUM_DRIVERS-$(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_V3D)      += v3d
 MESA3D_GALLIUM_DRIVERS-$(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_VC4)      += vc4
 MESA3D_GALLIUM_DRIVERS-$(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_VIRGL)    += virgl
+# pixL - add zink
+MESA3D_GALLIUM_DRIVERS-$(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_ZINK)     += zink
+# pixL - add d3d12
+MESA3D_GALLIUM_DRIVERS-$(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_D3D12)    += d3d12
 # Vulkan Drivers
 MESA3D_VULKAN_DRIVERS-$(BR2_PACKAGE_MESA3D_VULKAN_DRIVER_BROADCOM) += broadcom
 MESA3D_VULKAN_DRIVERS-$(BR2_PACKAGE_MESA3D_VULKAN_DRIVER_INTEL)   += intel
 MESA3D_VULKAN_DRIVERS-$(BR2_PACKAGE_MESA3D_VULKAN_DRIVER_SWRAST) += swrast
-# pixL modification
+# pixL - add Vulkan Drivers
+MESA3D_VULKAN_DRIVERS-$(BR2_PACKAGE_MESA3D_VULKAN_DRIVER_HASWELL)   += intel_hasvk
 MESA3D_VULKAN_DRIVERS-$(BR2_PACKAGE_MESA3D_VULKAN_DRIVER_AMD)		+= amd
+MESA3D_VULKAN_DRIVERS-$(BR2_PACKAGE_MESA3D_VULKAN_DRIVER_BROADCOM)  += broadcom
+MESA3D_VULKAN_DRIVERS-$(BR2_PACKAGE_MESA3D_VULKAN_DRIVER_PANFROST)  += panfrost
+MESA3D_VULKAN_DRIVERS-$(BR2_PACKAGE_MESA3D_VULKAN_DRIVER_FREEDRENO) += freedreno
+MESA3D_VULKAN_DRIVERS-$(BR2_PACKAGE_MESA3D_VULKAN_DRIVER_LAVAPIPE)  += lavapipe
+# pixL - codecs
+MESA3D_VIDEO_CODECS-$(BR2_PACKAGE_MESA3D_VIDEO_CODEC_VC1DEC)        += vc1dec
+MESA3D_VIDEO_CODECS-$(BR2_PACKAGE_MESA3D_VIDEO_CODEC_H264DEC)       += h264dec
+MESA3D_VIDEO_CODECS-$(BR2_PACKAGE_MESA3D_VIDEO_CODEC_H264ENC)       += h264enc
+MESA3D_VIDEO_CODECS-$(BR2_PACKAGE_MESA3D_VIDEO_CODEC_H265DEC)       += h265dec
+MESA3D_VIDEO_CODECS-$(BR2_PACKAGE_MESA3D_VIDEO_CODEC_H265ENC)       += h265enc
+MESA3D_VIDEO_CODECS-$(BR2_PACKAGE_MESA3D_VIDEO_CODEC_AV1DEC)        += av1dec
+MESA3D_VIDEO_CODECS-$(BR2_PACKAGE_MESA3D_VIDEO_CODEC_AV1ENC)        += av1enc
+MESA3D_VIDEO_CODECS-$(BR2_PACKAGE_MESA3D_VIDEO_CODEC_VP9DEC)        += vp9dec
+# pixL
+# Vulkan Layers - helps with multi-GPU switching
+ifeq ($(BR2_PACKAGE_WAYLAND)$(BR2_PACKAGE_MESA3D_NEEDS_X11),yy)
+MESA3D_DEPENDENCIES += python3 host-glslang
+MESA3D_CONF_OPTS += -Dvulkan-layers=device-select,overlay
+endif
 
 ifeq ($(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER),)
 MESA3D_CONF_OPTS += \
@@ -128,6 +159,13 @@ MESA3D_CONF_OPTS += \
 	-Dgallium-extra-hud=true
 endif
 
+# pixL - intel ray tracing
+ifeq ($(BR2_PACKAGE_MESA3D_VULKAN_DRIVER_INTEL),y)
+    MESA3D_DEPENDENCIES += host-intel-clc host-python-ply
+    MESA3D_CONF_OPTS += -Dintel-clc=system
+    MESA3D_MESON_EXTRA_BINARIES += intel_clc='$(HOST_DIR)/usr/bin/intel_clc'
+endif
+
 ifeq ($(BR2_PACKAGE_MESA3D_VULKAN_DRIVER),)
 MESA3D_CONF_OPTS += \
 	-Dvulkan-drivers=
@@ -135,6 +173,15 @@ else
 MESA3D_DEPENDENCIES += host-python-glslang
 MESA3D_CONF_OPTS += \
 	-Dvulkan-drivers=$(subst $(space),$(comma),$(MESA3D_VULKAN_DRIVERS-y))
+endif
+
+# pixL - video codecs
+ifeq ($(BR2_PACKAGE_MESA3D_VIDEO_CODEC),)
+MESA3D_CONF_OPTS += \
+	-Dvideo-codecs=
+else
+MESA3D_CONF_OPTS += \
+	-Dvideo-codecs=$(subst $(space),$(comma),$(MESA3D_VIDEO_CODECS-y))
 endif
 
 # APIs
@@ -151,7 +198,26 @@ MESA3D_CONF_OPTS += -Dopengl=true
 
 # libva and mesa3d have a circular dependency
 # we do not need libva support in mesa3d, therefore disable this option
+# pixL - we enable vaapi acceleration
+ifneq ($(BR2_PACKAGE_BATOCERA_TARGET_WSL),y)
+ifeq ($(BR2_PACKAGE_LIBVA),y)
+MESA3D_CONF_OPTS += -Dgallium-va=enabled
+MESA3D_DEPENDENCIES += libva
+# pixL - we link vaapi acceleration drivers accordingly
+define MESA3D_ADD_VA_LINKS
+	(mkdir -p $(TARGET_DIR)/usr/lib/va && cd $(TARGET_DIR)/usr/lib/va \
+	    && ln -sf /usr/lib/dri/radeonsi_drv_video.so radeonsi_drv_video.so \
+		&& ln -sf /usr/lib/dri/r600_drv_video.so r600_drv_video.so \
+		&& ln -sf /usr/lib/dri/nouveau_drv_video.so nouveau_drv_video.so)
+endef
+
+MESA3D_POST_INSTALL_TARGET_HOOKS += MESA3D_ADD_VA_LINKS
+else
 MESA3D_CONF_OPTS += -Dgallium-va=disabled
+endif
+else
+MESA3D_CONF_OPTS += -Dgallium-va=disabled
+endif
 
 # libGL is only provided for a full xorg stack, without libglvnd
 ifeq ($(BR2_PACKAGE_MESA3D_OPENGL_GLX),y)
@@ -241,6 +307,24 @@ MESA3D_CONF_OPTS += -Dzstd=enabled
 MESA3D_DEPENDENCIES += zstd
 else
 MESA3D_CONF_OPTS += -Dzstd=disabled
+endif
+
+# pixL icd.@0@.json vulkan files
+define MESA3D_VULKANJSON_X86_64
+        $(SED) s+"host_machine.cpu()"+"'x86_64'"+ $(@D)/src/intel/vulkan/meson.build \
+		    $(@D)/src/intel/vulkan_hasvk/meson.build $(@D)/src/amd/vulkan/meson.build
+endef
+
+define MESA3D_VULKANJSON_X86
+        $(SED) s+"host_machine.cpu()"+"'i686'"+ $(@D)/src/intel/vulkan/meson.build \
+		    $(@D)/src/intel/vulkan_hasvk/meson.build $(@D)/src/amd/vulkan/meson.build
+endef
+
+ifeq ($(BR2_x86_64),y)
+    MESA3D_PRE_CONFIGURE_HOOKS += MESA3D_VULKANJSON_X86_64
+endif
+ifeq ($(BR2_x86_i686),y)
+    MESA3D_PRE_CONFIGURE_HOOKS += MESA3D_VULKANJSON_X86
 endif
 
 MESA3D_CFLAGS = $(TARGET_CFLAGS)

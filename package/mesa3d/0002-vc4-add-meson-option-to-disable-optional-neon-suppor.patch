@@ -14,10 +14,10 @@ Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 [fix syntax error after previous rebases]
 ---
- meson_options.txt                    | 7 +++++++
+ meson_options.txt                    | 8 ++++++++
  src/gallium/drivers/vc4/meson.build  | 4 ++--
  src/gallium/drivers/vc4/vc4_tiling.h | 4 ++--
- 3 files changed, 11 insertions(+), 4 deletions(-)
+ 3 files changed, 12 insertions(+), 4 deletions(-)
 
 diff --git a/meson_options.txt b/meson_options.txt
 index 8e0bf2a..1cf0e07 100644
@@ -43,7 +43,7 @@ index 84da951..7f950de 100644
 +++ b/src/gallium/drivers/vc4/meson.build
 @@ -84,7 +84,7 @@ files_libvc4 = files(
  vc4_c_args = []
- 
+
  libvc4_neon = []
 -if host_machine.cpu_family() == 'arm'
 +if host_machine.cpu_family() == 'arm' and not get_option('gallium-vc4-neon').disabled()
@@ -57,7 +57,7 @@ index 84da951..7f950de 100644
 -  vc4_c_args += '-DUSE_ARM_ASM'
 +  vc4_c_args += '-DVC4_TILING_LT_NEON'
  endif
- 
+
  if dep_simpenrose.found()
 diff --git a/src/gallium/drivers/vc4/vc4_tiling.h b/src/gallium/drivers/vc4/vc4_tiling.h
 index 5afe329..919b299 100644
