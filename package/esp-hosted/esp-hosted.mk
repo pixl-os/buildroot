@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ESP_HOSTED_VERSION = 11e90f185a5a9922343e73e44032816a0e3ddedb
+ESP_HOSTED_VERSION = 669fd9cd1892bb8b364701968d5f06225346eea9
 ESP_HOSTED_SITE = $(call github,espressif,esp-hosted,$(ESP_HOSTED_VERSION))
 ESP_HOSTED_DEPENDENCIES = linux
 ESP_HOSTED_LICENSE = GPL-2.0
@@ -26,6 +26,12 @@ ifeq ($(BR2_PACKAGE_ESP_HOSTED_SPI),y)
 ESP_HOSTED_MODULE_MAKE_OPTS = target=spi
 else
 ESP_HOSTED_MODULE_MAKE_OPTS = target=sdio
+endif
+
+ifeq ($(BR2_PACKAGE_ESP_HOSTED_TARGET_ESP32),y)
+ESP_HOSTED_MODULE_MAKE_OPTS += ESP_SLAVE=CONFIG_TARGET_ESP32=y
+else
+ESP_HOSTED_MODULE_MAKE_OPTS += ESP_SLAVE=CONFIG_TARGET_ESP32C6=y
 endif
 
 $(eval $(kernel-module))

@@ -4,6 +4,7 @@
 #
 ################################################################################
 
+# pixL modification
 MOSQUITTO_VERSION = 2.0.18
 MOSQUITTO_SITE = https://mosquitto.org/files/source
 MOSQUITTO_LICENSE = EPL-2.0 or EDLv1.0

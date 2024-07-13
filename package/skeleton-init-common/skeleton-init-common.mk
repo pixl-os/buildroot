@@ -4,6 +4,7 @@
 #
 ################################################################################
 
+# pixL modification
 # The skeleton can't depend on the toolchain, since all packages depends on the
 # skeleton and the toolchain is a target package, as is skeleton.
 # Hence, skeleton would depends on the toolchain and the toolchain would depend
@@ -78,8 +79,7 @@ endif
 define SKELETON_INIT_COMMON_SET_ROOT_PASSWD
 	$(SED) s,^root:[^:]*:,root:$(SKELETON_INIT_COMMON_ROOT_PASSWORD):, $(TARGET_DIR)/etc/shadow
 endef
-
-# pixl disable set root password
+# pixL disable set root password
 #SKELETON_INIT_COMMON_TARGET_FINALIZE_HOOKS += SKELETON_INIT_COMMON_SET_ROOT_PASSWD
 
 ifeq ($(BR2_SYSTEM_BIN_SH_NONE),y)

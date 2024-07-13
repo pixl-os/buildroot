@@ -4,21 +4,24 @@
 #
 ################################################################################
 
+# pixL modification
 VULKAN_TOOLS_VERSION = $(VULKAN_HEADERS_VERSION)
 VULKAN_TOOLS_SITE = $(call github,KhronosGroup,Vulkan-Tools,v$(VULKAN_TOOLS_VERSION))
 VULKAN_TOOLS_LICENSE = Apache-2.0
 VULKAN_TOOLS_LICENSE_FILES = LICENSE.txt
 
+# pixL - add vulkan-volk
 VULKAN_TOOLS_DEPENDENCIES = \
 	vulkan-headers \
 	vulkan-loader \
 	vulkan-volk
 
+# pixL - add DUPDATE_DEPS=OFF
 VULKAN_TOOLS_CONF_OPTS += \
 	-DBUILD_CUBE=OFF \
 	-DBUILD_ICD=OFF \
 	-DBUILD_VULKANINFO=ON \
-	-DINSTALL_ICD=OFF
+	-DINSTALL_ICD=OFF \
 	-DUPDATE_DEPS=OFF
 
 ifeq ($(BR2_PACKAGE_DIRECTFB),y)
@@ -46,11 +49,10 @@ else
 VULKAN_TOOLS_CONF_OPTS += -DBUILD_WSI_WAYLAND_SUPPORT=OFF
 endif
 
+# pixL - add information version
 define VULKAN_TOOLS_SERVICE
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_RECALBOX_PATH)/package/recalbox/gpu/vulkan/vulkan-tools/S55vulkaninfo $(TARGET_DIR)/etc/init.d/S55vulkaninfo
 endef
-
-#remove (at least temporary) while it prevents es to open windows with some nvidia cards
-#VULKAN_TOOLS_POST_INSTALL_TARGET_HOOKS += VULKAN_TOOLS_SERVICE
+VULKAN_TOOLS_POST_INSTALL_TARGET_HOOKS += VULKAN_TOOLS_SERVICE
 
 $(eval $(cmake-package))

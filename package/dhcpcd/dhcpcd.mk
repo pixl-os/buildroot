@@ -4,18 +4,21 @@
 #
 ################################################################################
 
-DHCPCD_VERSION = 10.0.1
+DHCPCD_VERSION = 10.0.8
 DHCPCD_SOURCE = dhcpcd-$(DHCPCD_VERSION).tar.xz
 DHCPCD_SITE = https://github.com/NetworkConfiguration/dhcpcd/releases/download/v$(DHCPCD_VERSION)
 DHCPCD_DEPENDENCIES = host-pkgconf
 DHCPCD_LICENSE = BSD-2-Clause
 DHCPCD_LICENSE_FILES = LICENSE
-DHCPCD_CPE_ID_VENDOR = dhcpcd_project
+DHCPCD_CPE_ID_VALID = YES
 
 DHCPCD_CONFIG_OPTS = \
 	--libexecdir=/lib/dhcpcd \
 	--os=linux \
 	--privsepuser=dhcpcd
+
+DHCPCD_MAKE_OPTS = \
+	BINMODE=755
 
 ifeq ($(BR2_PACKAGE_DHCPCD_ENABLE_PRIVSEP),y)
 DHCPCD_CONFIG_OPTS += --enable-privsep
@@ -43,21 +46,20 @@ define DHCPCD_CONFIGURE_CMDS
 endef
 
 define DHCPCD_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) all
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(DHCPCD_MAKE_OPTS) all
 endef
 
 define DHCPCD_INSTALL_TARGET_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) install DESTDIR=$(TARGET_DIR)
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(DHCPCD_MAKE_OPTS) install DESTDIR=$(TARGET_DIR)
 endef
 
 # When network-manager is enabled together with dhcpcd, it will use
 # dhcpcd as a DHCP client, and will be in charge of running, so we
 # don't want the init script or service file to be installed.
-# pixL need change to s10 for network share
 ifeq ($(BR2_PACKAGE_NETWORK_MANAGER),)
 define DHCPCD_INSTALL_INIT_SYSV
 	$(INSTALL) -m 755 -D package/dhcpcd/S41dhcpcd \
-		$(TARGET_DIR)/etc/init.d/S10dhcpcd
+		$(TARGET_DIR)/etc/init.d/S41dhcpcd
 endef
 
 define DHCPCD_INSTALL_INIT_SYSTEMD

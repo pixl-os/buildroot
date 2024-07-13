@@ -1,5 +1,6 @@
-# Hash from: https://download.qt.io/official_releases/qt/6.6/6.6.1/submodules/qtserialbus-everywhere-src-6.6.1.tar.xz.sha256
-sha256  5c145e630b30a1c204e787c46833bb68d9bcece31343b588a6788711f49ef7ac  qtserialbus-everywhere-src-6.6.1.tar.xz
+# pixL modification
+# Hash from: https://download.qt.io/official_releases/qt/6.7/6.7.2/submodules/qtserialbus-everywhere-src-6.7.2.tar.xz.sha256
+sha256  67641ca99b455746d7d956c516dfaa5f2c48696834c71d5720d63e736d374b2b  qtserialbus-everywhere-src-6.7.2.tar.xz
 
 # Hashes for license files:
 sha256  9f0490f18656c6f2435bd14f603ef0c96434d1825615363dce43abb42ed1dcce  LICENSES/BSD-3-Clause.txt

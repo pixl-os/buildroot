@@ -1,3 +1,4 @@
+# pixL modification
 config BR2_PACKAGE_QT6WAYLAND
     bool "qt6wayland"
     depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_6 # CAN FD

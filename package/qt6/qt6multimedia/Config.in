@@ -1,3 +1,4 @@
+# pixL modification
 config BR2_PACKAGE_QT6MULTIMEDIA
     bool "qt6multimedia"
     depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_6 # CAN FD

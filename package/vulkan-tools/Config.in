@@ -1,3 +1,4 @@
+# pixL modification
 config BR2_PACKAGE_VULKAN_TOOLS
 	bool "vulkan-tools"
 	depends on BR2_INSTALL_LIBSTDCPP # vulkan-loader
@@ -6,7 +7,7 @@ config BR2_PACKAGE_VULKAN_TOOLS
 	depends on BR2_TOOLCHAIN_HAS_THREADS # vulkan-loader
 	select BR2_PACKAGE_VULKAN_HEADERS
 	select BR2_PACKAGE_VULKAN_LOADER
-	select BR2_PACKAGE_VULKAN_VOLK
+	select BR2_PACKAGE_VULKAN_VOLK # add and package is into repo pixL package
 
 	help
 	  The Khronos official Vulkan Tools and Utilities.

@@ -1,3 +1,4 @@
+# pixL modification
 config BR2_PACKAGE_SDL_SOUND
 	bool "SDL_sound"
 	depends on BR2_PACKAGE_SDL2

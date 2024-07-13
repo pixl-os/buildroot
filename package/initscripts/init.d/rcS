@@ -20,7 +20,6 @@ for i in /etc/init.d/S??* ;do
 	    ;;
 	*)
 	    # No sh extension, so fork subprocess.
-	    recallog -s "rcS" -t "INIT" -f init.log "start $i"
 	    $i start
 	    ;;
     esac

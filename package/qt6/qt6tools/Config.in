@@ -1,3 +1,4 @@
+# pixL modification
 config BR2_PACKAGE_QT6TOOLS
     bool "qt6tools"
     depends on BR2_PACKAGE_QT6

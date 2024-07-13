@@ -4,14 +4,17 @@
 #
 ################################################################################
 
-OPENSSH_VERSION_MAJOR = 9.3
-OPENSSH_VERSION_MINOR = p2
+OPENSSH_VERSION_MAJOR = 9.7
+OPENSSH_VERSION_MINOR = p1
 OPENSSH_VERSION = $(OPENSSH_VERSION_MAJOR)$(OPENSSH_VERSION_MINOR)
 OPENSSH_CPE_ID_VERSION = $(OPENSSH_VERSION_MAJOR)
 OPENSSH_CPE_ID_UPDATE = $(OPENSSH_VERSION_MINOR)
 OPENSSH_SITE = http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable
 OPENSSH_LICENSE = BSD-3-Clause, BSD-2-Clause, Public Domain
 OPENSSH_LICENSE_FILES = LICENCE
+
+# 0001-Improve-detection-of-fzero-call-used-regs-used.patch
+OPENSSH_AUTORECONF = YES
 
 OPENSSH_CONF_ENV = \
 	LD="$(TARGET_CC)" \
@@ -44,6 +47,11 @@ OPENSSH_CONF_OPTS += --without-pie
 endif
 
 OPENSSH_DEPENDENCIES = host-pkgconf zlib openssl
+
+# crypt() in libcrypt only required for sshd.
+ifeq ($(BR2_PACKAGE_OPENSSH_SERVER)$(BR2_PACKAGE_LIBXCRYPT),yy)
+OPENSSH_DEPENDENCIES += libxcrypt
+endif
 
 ifeq ($(BR2_PACKAGE_CRYPTODEV_LINUX),y)
 OPENSSH_DEPENDENCIES += cryptodev-linux
