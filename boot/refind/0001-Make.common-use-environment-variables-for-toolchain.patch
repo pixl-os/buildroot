@@ -1,0 +1,59 @@
+--- a/Make.common	2024-04-06 19:05:14.000000000 +0200
++++ b/Make.common	2024-04-24 19:05:18.600020111 +0200
+@@ -17,33 +17,6 @@
+ # used to compile rEFInd....
+ #
+ 
+-EFIINC          = /usr/include/efi
+-GNUEFILIB       = /usr/lib
+-EFILIB          = /usr/lib
+-EFICRT0         = /usr/lib
+-
+-# Below are good for compiling with Fedora on x86-64....
+-#EFIINC          = /usr/include/efi
+-#GNUEFILIB       = /usr/lib64
+-#EFILIB          = /usr/lib64
+-#EFICRT0         = /usr/lib64/gnuefi
+-
+-# Comment out above and uncomment below if using locally-compiled GNU-EFI....
+-#EFIINC          = /usr/local/include/efi
+-#GNUEFILIB       = /usr/local/lib
+-#EFILIB          = /usr/local/lib
+-#EFICRT0         = /usr/local/lib
+-
+-# Does GNU-EFI support --target=efi-app-aarch64 with objcopy?
+-# This support appeared in GNU-EFI 3.0.17, so set this to "y" if using that
+-# version or later and compiling for ARM64; but set it to "n" if using an
+-# earlier version of GNU-EFI on ARM64. This option has no effect on IA32/x86
+-# or X64/AMD64/x86-64 systems.
+-GNUEFI_ARM64_TARGET_SUPPORT ?= n
+-
+-HOSTARCH        = $(shell uname -m | sed s,i[3456789]86,ia32,)
+-ARCH            ?= $(HOSTARCH)
+-
+ # Pointer to SBAT .csv file. First is default; uncomment second (or make your
+ # your own) if you build your own binary. If you make changes and build your
+ # own binary, creating your own file is the best practice.
+@@ -52,22 +25,6 @@
+ 
+ # Note: TIANOBASE is defined in master Makefile and exported
+ GENFW           = $(TIANOBASE)/BaseTools/Source/C/bin/GenFw
+-prefix          = /usr/bin/
+-ifeq ($(ARCH),aarch64)
+-  CC            = $(prefix)aarch64-linux-gnu-gcc
+-  AS            = $(prefix)aarch64-linux-gnu-as
+-  LD            = $(prefix)aarch64-linux-gnu-ld
+-  AR            = $(prefix)aarch64-linux-gnu-ar
+-  RANLIB        = $(prefix)aarch64-linux-gnu-ranlib
+-  OBJCOPY       = $(prefix)aarch64-linux-gnu-objcopy
+-else
+-  CC            = $(prefix)gcc
+-  AS            = $(prefix)as
+-  LD            = $(prefix)ld
+-  AR            = $(prefix)ar
+-  RANLIB        = $(prefix)ranlib
+-  OBJCOPY       = $(prefix)objcopy
+-endif
+ 
+ ifeq ($(MAKEWITH),TIANO)
+ # Below file defines TARGET (RELEASE or DEBUG) and TOOL_CHAIN_TAG (GCC44, GCC45, GCC46, or GCC47)
