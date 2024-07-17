@@ -12,6 +12,8 @@ menuconfig BR2_PACKAGE_MESA3D
 	select BR2_PACKAGE_ZLIB
 	select BR2_PACKAGE_PYTHON3
 	select BR2_PACKAGE_HOST_GLSLANG
+	select BR2_PACKAGE_SPIRV_TOOLS
+	select BR2_PACKAGE_SPIRV_LLVM_TRANSLATOR
 	help
 	  Mesa 3D, an open-source implementation of the OpenGL
 	  specification.

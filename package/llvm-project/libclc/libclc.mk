@@ -4,6 +4,7 @@
 #
 ################################################################################
 
+# pixL modification
 LIBCLC_VERSION = $(LLVM_PROJECT_VERSION)
 LIBCLC_SITE = $(LLVM_PROJECT_SITE)
 LIBCLC_SOURCE = libclc-$(LIBCLC_VERSION).src.tar.xz
@@ -12,6 +13,9 @@ LIBCLC_LICENSE_FILES = LICENSE.TXT
 
 LIBCLC_DEPENDENCIES = host-clang host-llvm host-spirv-llvm-translator
 LIBCLC_INSTALL_STAGING = YES
+
+# pixL - add host package for host-intel-clc
+HOST_LIBCLC_DEPENDENCIES = host-clang host-llvm host-spirv-llvm-translator
 
 # CMAKE_*_COMPILER_FORCED=ON skips testing the tools and assumes
 # llvm-config provided values
@@ -40,3 +44,5 @@ LIBCLC_CONF_OPTS = \
 	-DLLVM_CONFIG="$(HOST_DIR)/bin/llvm-config"
 
 $(eval $(cmake-package))
+# pixL - add host package for host-intel-clc
+$(eval $(host-cmake-package))
