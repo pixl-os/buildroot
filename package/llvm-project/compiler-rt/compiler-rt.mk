@@ -19,9 +19,9 @@ COMPILER_RT_INSTALL_TARGET = NO
 
 # pixL Patch for take CMakePolicy.cmake into /host/lib/cmake/llvm
 define COMPILER_RT_CMAKELIST_FIX_POLICY
-	sed -i -r '9s|.*/Modules/CMakePolicy.cmake.*|include($(HOST_DIR)/lib/cmake/llvm/CMakePolicy.cmake|g' $(@D)/CMakeLists.txt
+	sed -i -r '11s|.*/Modules/CMakePolicy.cmake.*|include($(HOST_DIR)/lib/cmake/llvm/CMakePolicy.cmake|g' $(@D)/CMakeLists.txt
 endef
-COMPILER_RT_PRE_CONFIGURE_HOOKS= COMPILER_RT_CMAKELIST_FIX_POLICY
+COMPILER_RT_PRE_CONFIGURE_HOOKS = COMPILER_RT_CMAKELIST_FIX_POLICY
 
 COMPILER_RT_CONF_OPTS=-DCOMPILER_RT_STANDALONE_BUILD=OFF \
 	-DCOMPILER_RT_STANDALONE_BUILD=ON \
