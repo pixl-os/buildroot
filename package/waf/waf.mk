@@ -4,7 +4,8 @@
 #
 ################################################################################
 
-WAF_VERSION = 2.0.26
+# pixL modification
+WAF_VERSION = 2.1.2
 WAF_SOURCE = waf-$(WAF_VERSION)
 WAF_SITE = https://waf.io
 WAF_LICENSE = BSD-3-Clause
