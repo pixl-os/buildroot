@@ -1,4 +1,3 @@
-# pixL modification
 [Paths]
 Prefix=/usr
 HostPrefix=@@HOST_DIR@@
