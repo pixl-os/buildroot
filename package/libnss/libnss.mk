@@ -4,6 +4,7 @@
 #
 ################################################################################
 
+# pixL modification
 LIBNSS_VERSION = 3.100
 LIBNSS_SOURCE = nss-$(LIBNSS_VERSION).tar.gz
 LIBNSS_SITE = https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_$(subst .,_,$(LIBNSS_VERSION))_RTM/src
@@ -172,6 +173,12 @@ define HOST_LIBNSS_INSTALL_CMDS
 	$(SED) '/^prefix/s,=.*,=$(HOST_DIR),g;' \
 		$(HOST_DIR)/lib/pkgconfig/nss.pc
 endef
+
+# pixL Patch for take sqlite3.h into /host/include
+define HOST_LIBNSS_SDB_FIX_SQLITE3
+	sed -i -r '24s|.*<sqlite3.h>.*|#include <$(HOST_DIR)/include/sqlite3.h>|g' $(@D)/nss/lib/softoken/sdb.c
+endef
+HOST_LIBNSS_PRE_CONFIGURE_HOOKS = HOST_LIBNSS_SDB_FIX_SQLITE3
 
 $(eval $(generic-package))
 $(eval $(host-generic-package))
