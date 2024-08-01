@@ -4,7 +4,8 @@
 #
 ################################################################################
 
-MPV_VERSION = 0.35.1
+# pixL modification
+MPV_VERSION = 0.38.0
 MPV_SITE = $(call github,mpv-player,mpv,v$(MPV_VERSION))
 MPV_DEPENDENCIES = \
 	host-pkgconf ffmpeg libass zlib \
@@ -227,4 +228,4 @@ ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 MPV_CONF_ENV += LDFLAGS="$(TARGET_LDFLAGS) -latomic"
 endif
 
-$(eval $(waf-package))
+$(eval $(meson-package))
