@@ -10,5 +10,7 @@ PYTHON_PYUDEV_SITE = https://files.pythonhosted.org/packages/20/b6/16961ac357557
 PYTHON_PYUDEV_LICENSE = LGPL-2.1+
 PYTHON_PYUDEV_LICENSE_FILES = COPYING
 PYTHON_PYUDEV_SETUP_TYPE = setuptools
+# pixL - add dependencies python-pygame2 for build at the same moment old python-pygame
+PYTHON_PYUSB_DEPENDENCIES = python-pygame2
 
 $(eval $(python-package))
