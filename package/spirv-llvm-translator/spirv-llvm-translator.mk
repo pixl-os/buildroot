@@ -6,7 +6,7 @@
 
 # Generate version string using:
 #   git describe --tags --match 'v15*' --abbrev=40 origin/llvm_release_150
-SPIRV_LLVM_TRANSLATOR_VERSION = v17.0.0
+SPIRV_LLVM_TRANSLATOR_VERSION = v17.0.1
 SPIRV_LLVM_TRANSLATOR_SITE = $(call github,KhronosGroup,SPIRV-LLVM-Translator,$(SPIRV_LLVM_TRANSLATOR_VERSION))
 SPIRV_LLVM_TRANSLATOR_LICENSE = NCSA
 SPIRV_LLVM_TRANSLATOR_LICENSE_FILES = LICENSE.TXT
