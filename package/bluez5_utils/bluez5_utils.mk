@@ -5,26 +5,23 @@
 ################################################################################
 
 # Keep the version and patches in sync with bluez5_utils-headers
-BLUEZ5_UTILS_VERSION = 5.75
+BLUEZ5_UTILS_VERSION = 5.77
 BLUEZ5_UTILS_SOURCE = bluez-$(BLUEZ5_UTILS_VERSION).tar.xz
 BLUEZ5_UTILS_SITE = $(BR2_KERNEL_MIRROR)/linux/bluetooth
-# 0001-configure.ac-Fix-disable-cups.patch
-# 0002-configure.ac-fix-sixaxis-build-without-tools.patch
 BLUEZ5_UTILS_AUTORECONF = YES
 BLUEZ5_UTILS_INSTALL_STAGING = YES
 BLUEZ5_UTILS_LICENSE = GPL-2.0+, LGPL-2.1+
 BLUEZ5_UTILS_LICENSE_FILES = COPYING COPYING.LIB
 BLUEZ5_UTILS_CPE_ID_VENDOR = bluez
 BLUEZ5_UTILS_CPE_ID_PRODUCT = bluez
-# pixl need auto reconf for default conf 
-BLUEZ5_UTILS_AUTORECONF = YES
 
 BLUEZ5_UTILS_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_BLUEZ5_UTILS_HEADERS),bluez5_utils-headers) \
 	dbus \
 	libglib2
 
-# pixl need overlay config force --localstatedir
+# pixL - remove --disable-datafiles, we need them
+# pixL - need overlay config force --localstatedir
 BLUEZ5_UTILS_CONF_OPTS = \
 	--enable-library \
 	--disable-cups \
@@ -171,6 +168,12 @@ else
 BLUEZ5_UTILS_CONF_OPTS += --disable-deprecated
 endif
 
+# pixL - install btmgmt to change ssp
+define BLUEZ5_UTILS_INSTALL_BTMGMT
+	$(INSTALL) -D -m 0755 $(@D)/tools/btmgmt $(TARGET_DIR)/usr/bin/btmgmt
+endef
+BLUEZ5_UTILS_POST_INSTALL_TARGET_HOOKS += BLUEZ5_UTILS_INSTALL_BTMGMT
+
 # enable test
 ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_TEST),y)
 BLUEZ5_UTILS_CONF_OPTS += --enable-test
@@ -204,8 +207,9 @@ endif
 # pixL need default intall conf in etc/bluetooth
 define BLUEZ5_UTILS_INSTALL_CONF_FILES
 	mkdir -p $(TARGET_DIR)/etc/bluetooth
+	chmod 0755 $(TARGET_DIR)/etc/bluetooth/
 	for i in `find $(@D) -name *.conf` ; do \
-		$(INSTALL) -D -m 755 $$i $(TARGET_DIR)/etc/bluetooth/ ; \
+		$(INSTALL) -D -m 0755 $$i $(TARGET_DIR)/etc/bluetooth/ ; \
 	done
 endef
 BLUEZ5_UTILS_POST_INSTALL_TARGET_HOOKS += BLUEZ5_UTILS_INSTALL_CONF_FILES
