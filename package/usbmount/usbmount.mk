@@ -15,7 +15,8 @@ define USBMOUNT_INSTALL_TARGET_CMDS
 	# pixl add sed usbmount.conf for many format
 	$(SED) 's|^FILESYSTEMS=.*|FILESYSTEMS="vfat ext2 ext3 ext4 hfsplus ntfs exfat"|g' $(@D)/usbmount.conf
 	$(SED) 's|/media/usb|/recalbox/share/externals/usb|g' $(@D)/usbmount.conf
-	$(SED) 's|/usr/share/usbmount/usbmount|/recalbox/scripts/recalbox-usbmount.sh|g' $(@D)/usbmount.rules
+	$(SED) 's|/usr/share/usbmount/usbmount add|/recalbox/scripts/recalbox-usbmount.sh add %k|g' $(@D)/usbmount.rules
+	$(SED) 's|/usr/share/usbmount/usbmount remove|/recalbox/scripts/recalbox-usbmount.sh remove %k|g' $(@D)/usbmount.rules
 	$(INSTALL) -m 0755 -D $(@D)/usbmount $(TARGET_DIR)/usr/share/usbmount/usbmount
 
 	$(INSTALL) -m 0755 -D $(@D)/00_create_model_symlink \
