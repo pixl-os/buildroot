@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file (focus on ch
 
 ## [pixl-2023.08.2-base] - 2024-09-16
 - update :
+	- libsoundtouch 2.3.1 -> 2.3.3
+		- need by duckstation
+
+## [pixl-2023.08.2-base] - 2024-mm-dd
+- update :
 	- add vulkan-headers 1.3.270 -> 1.3.273
 
 - new features:
