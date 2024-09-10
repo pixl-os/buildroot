@@ -104,7 +104,8 @@ QT5WEBENGINE_CONF_OPTS += \
 	-feature-webengine-system-nss \
 	-feature-webengine-system-png \
 	-feature-webengine-system-snappy \
-	-feature-webengine-system-zlib
+	-feature-webengine-system-zlib \
+	-feature-webengine-noexecstack
 
 QT5WEBENGINE_CONF_OPTS += \
 	-no-webengine-geolocation \
@@ -117,7 +118,6 @@ QT5WEBENGINE_CONF_OPTS += \
 	-no-feature-webengine-developer-build \
 	-no-feature-webengine-full-debug-info \
 	-no-feature-webengine-native-spellchecker \
-	-no-feature-webengine-noexecstack \
 	-no-feature-webengine-system-minizip \
 	-no-feature-webengine-system-gn
 
@@ -150,6 +150,12 @@ define QT5WEBENGINE_CREATE_HOST_PYTHON_WRAPPER
 	chmod +x $(@D)/host-bin/python
 endef
 QT5WEBENGINE_PRE_CONFIGURE_HOOKS += QT5WEBENGINE_CREATE_HOST_PYTHON_WRAPPER
+
+define QT5WEBENGINE_FIX_PYTHON_REGEX
+	$(SED) 's/\^(?i)/(?i)\^/' $(@D)/src/3rdparty/chromium/tools/metrics/ukm/ukm_model.py
+	$(SED) "s|'rU'|'r'|g" $(@D)/src/3rdparty/chromium/tools/grit/grit/util.py
+endef
+QT5WEBENGINE_POST_CONFIGURE_HOOKS += QT5WEBENGINE_FIX_PYTHON_REGEX
 
 QT5WEBENGINE_ENV += NINJAFLAGS="-j$(PARALLEL_JOBS)"
 
