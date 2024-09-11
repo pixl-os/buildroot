@@ -46,7 +46,7 @@ QT6BASE_INSTALL_STAGING = YES
 QT6BASE_CONF_OPTS = \
 	-DQT_HOST_PATH=$(HOST_DIR) \
 	-DINSTALL_ARCHDATADIR=lib/qt6 \
-	-DFEATURE_concurrent=OFF \
+	-DFEATURE_concurrent=ON \
 	-DFEATURE_xml=OFF \
 	-DFEATURE_sql=OFF \
 	-DFEATURE_testlib=OFF \
@@ -54,6 +54,9 @@ QT6BASE_CONF_OPTS = \
 	-DFEATURE_dbus=OFF \
 	-DFEATURE_icu=OFF \
 	-DFEATURE_glib=OFF \
+	-DFEATURE_opengl=ON \
+	-DFEATURE_opengl_desktop=ON \
+	-DFEATURE_gui=ON \
 	-DFEATURE_system_doubleconversion=ON \
 	-DFEATURE_system_pcre2=ON \
 	-DFEATURE_system_zlib=ON \
@@ -80,23 +83,33 @@ QT6BASE_CONF_OPTS += \
 	-DFEATURE_avx512vbmi=OFF \
 	-DFEATURE_avx512vbmi2=OFF \
 	-DFEATURE_avx512vl=OFF \
-	-DFEATURE_vaes=OFF
+	-DFEATURE_vaes=OFF \
+	-DQT_BUILD_TESTS_BY_DEFAULT=OFF \
+    -DQT_BUILD_EXAMPLES_BY_DEFAULT=OFF
 
 HOST_QT6BASE_DEPENDENCIES = \
 	host-double-conversion \
 	host-libb2 \
 	host-pcre2 \
 	host-zlib
+# batocera - gui, concurrent, sql, testlib & network = ON for other Qt6 packages
 HOST_QT6BASE_CONF_OPTS = \
-	-DFEATURE_concurrent=OFF \
+	-GNinja \
+	-DFEATURE_gui=ON \
+	-DFEATURE_concurrent=ON \
 	-DFEATURE_xml=ON \
+	-DFEATURE_sql=ON \
+	-DFEATURE_testlib=ON \
+	-DFEATURE_network=ON \
 	-DFEATURE_dbus=OFF \
 	-DFEATURE_icu=OFF \
 	-DFEATURE_glib=OFF \
 	-DFEATURE_system_doubleconversion=ON \
 	-DFEATURE_system_libb2=ON \
 	-DFEATURE_system_pcre2=ON \
-	-DFEATURE_system_zlib=ON
+	-DFEATURE_system_zlib=ON \
+	-DQT_BUILD_TESTS_BY_DEFAULT=OFF \
+    -DQT_BUILD_EXAMPLES_BY_DEFAULT=OFF
 
 # We need host-qt6base with Gui support when building host-qt6shadertools,
 # otherwise the build is skipped and no qsb host tool is generated.
@@ -123,6 +136,13 @@ HOST_QT6BASE_CONF_OPTS += \
 else
 HOST_QT6BASE_CONF_OPTS += -DFEATURE_gui=OFF
 endif
+# batocera disable opengl when building host-qt6base
+HOST_QT6BASE_CONF_OPTS += \
+	-DINPUT_opengl=no
+
+define HOST_QT6BASE_BUILD_CMDS
+	$(HOST_MAKE_ENV) $(BR2_CMAKE) --build $(HOST_QT6BASE_BUILDDIR)
+endef
 
 # The Network module is explicitly required by qt6tools.
 ifeq ($(BR2_PACKAGE_HOST_QT6BASE_NETWORK),y)
@@ -194,15 +214,19 @@ else
 QT6BASE_CONF_OPTS += -DFEATURE_linuxfb=OFF
 endif
 
+# batocera - add xinput
 ifeq ($(BR2_PACKAGE_QT6BASE_XCB),y)
 QT6BASE_CONF_OPTS += \
 	-DFEATURE_xcb=ON \
 	-DFEATURE_xcb_xlib=ON \
 	-DFEATURE_xkbcommon=ON \
-	-DFEATURE_xkbcommon_x11=ON
+	-DFEATURE_xkbcommon_x11=ON \
+	-DFEATURE_system_xcb_xinput=ON
+# batocera - add cursor
 QT6BASE_DEPENDENCIES += \
 	libxcb \
 	libxkbcommon \
+	xcb-util-cursor \
 	xcb-util-wm \
 	xcb-util-image \
 	xcb-util-keysyms \
@@ -274,8 +298,13 @@ else
 QT6BASE_CONF_OPTS += -DFEATURE_fontconfig=OFF
 endif
 
+# batocera - add libXext
 ifeq ($(BR2_PACKAGE_QT6BASE_WIDGETS),y)
 QT6BASE_CONF_OPTS += -DFEATURE_widgets=ON
+
+ifeq ($(BR2_PACKAGE_XSERVER_XORG_SERVER),y)
+QT6BASE_DEPENDENCIES += xlib_libXext
+endif
 
 # only enable gtk support if libgtk3 X11 backend is enabled
 ifeq ($(BR2_PACKAGE_LIBGTK3)$(BR2_PACKAGE_LIBGTK3_X11),yy)
