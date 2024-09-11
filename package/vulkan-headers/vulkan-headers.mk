@@ -6,7 +6,7 @@
 
 # Note: changing this version will also affect vulkan-loader and
 # vulkan-tools, so please update those packages as well.
-VULKAN_HEADERS_VERSION = v1.3.270
+VULKAN_HEADERS_VERSION = v1.3.273
 VULKAN_HEADERS_SITE = $(call github,KhronosGroup,Vulkan-Headers,$(VULKAN_HEADERS_VERSION))
 VULKAN_HEADERS_LICENSE = Apache-2.0
 VULKAN_HEADERS_LICENSE_FILES = LICENSE.txt
