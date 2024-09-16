@@ -1,13 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file (focus on change done on pixL-master branch).
 
-## [pixl-2023.08.2-base] - 2024-mm-dd
+## [pixl-2023.08.2-base] - 2024-09-16
 - update :
 	- add vulkan-headers 1.3.270 -> 1.3.273
 
 - new features:
 	- add spirv-headers 1.3.268.0
 	- add spirv-tools 1.3.268.0
+	- to have device name from our usbmount script call by rules
 
 ## [pixl-2023.08.2-base] - 2024-08-05
 	- new features:
