@@ -10,6 +10,9 @@ All notable changes to this project will be documented in this file (focus on ch
 	- add spirv-tools 1.3.268.0
 	- to have device name from our usbmount script call by rules
 
+- fixes:
+    - remove legacy buildroot usbmount patch to mount block (only usb ones now)
+
 ## [pixl-2023.08.2-base] - 2024-08-05
 	- new features:
 		- add refind packacke on boot
