@@ -1,7 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file (focus on change done on pixL-master branch).
 
-## [pixl-2023.08.2-base] - 2024-09-16
+## [pixl-2023.08.2-base] - 202x-mm-dd
+- update :
+	- sdl2 2.28.5 -> 2.30.9
+		- need by pcsx2
+
+## [pixl-2023.08.2-base] - 2024-mm-dd
 - update :
 	- add vulkan-headers 1.3.270 -> 1.3.273
 
