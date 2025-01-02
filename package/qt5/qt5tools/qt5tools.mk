@@ -4,8 +4,7 @@
 #
 ################################################################################
 
-# v5.15.10-lts-lgpl
-QT5TOOLS_VERSION = 7918981beb4bcefea4f686370d38c99fcefaf33e
+QT5TOOLS_VERSION = f82ed367d1b80b69d738cfcde534b75854a45476
 QT5TOOLS_SITE = $(QT5_SITE)/qttools/-/archive/$(QT5TOOLS_VERSION)
 QT5TOOLS_SOURCE = qttools-$(QT5TOOLS_VERSION).tar.bz2
 
