@@ -28,7 +28,6 @@ SDL2_CONF_OPTS += \
 	--disable-video-wayland \
 	--disable-video-dummy \
 	--disable-video-offscreen \
-	--disable-video-vulkan \
 	--disable-video-directfb \
 	--disable-ime \
 	--disable-ibus \
@@ -167,6 +166,13 @@ SDL2_CONF_OPTS += \
 	--disable-video-opengles \
 	--disable-video-opengles1 \
 	--disable-video-opengles2
+endif
+
+ifeq ($(BR2_PACKAGE_VULKAN_HEADERS),y)
+SDL2_DEPENDENCIES += vulkan-headers
+SDL2_CONF_OPTS += --enable-video-vulkan
+else
+SDL2_CONF_OPTS += --disable-video-vulkan
 endif
 
 ifeq ($(BR2_PACKAGE_ALSA_LIB),y)
