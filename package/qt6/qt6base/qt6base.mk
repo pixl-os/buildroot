@@ -7,6 +7,10 @@
 QT6BASE_VERSION = $(QT6_VERSION)
 QT6BASE_SITE = $(QT6_SITE)
 QT6BASE_SOURCE = qtbase-$(QT6_SOURCE_TARBALL_PREFIX)-$(QT6BASE_VERSION).tar.xz
+QT6BASE_CPE_ID_VENDOR = qt
+QT6BASE_CPE_ID_PRODUCT = qt
+
+QT6BASE_CMAKE_BACKEND = ninja
 
 QT6BASE_LICENSE = \
 	GPL-2.0+ or LGPL-3.0, \
@@ -29,7 +33,6 @@ QT6BASE_LICENSE_FILES = \
 	LICENSES/Qt-GPL-exception-1.0.txt
 
 QT6BASE_DEPENDENCIES = \
-	host-ninja \
 	host-qt6base \
 	double-conversion \
 	libb2 \
@@ -38,9 +41,8 @@ QT6BASE_DEPENDENCIES = \
 QT6BASE_INSTALL_STAGING = YES
 
 QT6BASE_CONF_OPTS = \
-	-GNinja \
 	-DQT_HOST_PATH=$(HOST_DIR) \
-	-DFEATURE_concurrent=ON \
+	-DINSTALL_ARCHDATADIR=lib/qt6 \
 	-DFEATURE_xml=OFF \
 	-DFEATURE_sql=OFF \
 	-DFEATURE_testlib=OFF \
@@ -48,9 +50,6 @@ QT6BASE_CONF_OPTS = \
 	-DFEATURE_dbus=OFF \
 	-DFEATURE_icu=OFF \
 	-DFEATURE_glib=OFF \
-	-DFEATURE_opengl=ON \
-	-DFEATURE_opengl_desktop=ON \
-	-DFEATURE_gui=ON \
 	-DFEATURE_system_doubleconversion=ON \
 	-DFEATURE_system_pcre2=ON \
 	-DFEATURE_system_zlib=ON \
@@ -77,60 +76,77 @@ QT6BASE_CONF_OPTS += \
 	-DFEATURE_avx512vbmi=OFF \
 	-DFEATURE_avx512vbmi2=OFF \
 	-DFEATURE_avx512vl=OFF \
-	-DFEATURE_vaes=OFF \
-	-DQT_BUILD_TESTS_BY_DEFAULT=OFF \
-    -DQT_BUILD_EXAMPLES_BY_DEFAULT=OFF
-
-QT6BASE_POST_CONFIGURE_HOOKS += QT6_INSTALL_QT_CONF
-
-define QT6BASE_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(BR2_CMAKE) --build $(QT6BASE_BUILDDIR)
-endef
-
-define QT6BASE_INSTALL_STAGING_CMDS
-	$(TARGET_MAKE_ENV) DESTDIR=$(STAGING_DIR) $(BR2_CMAKE) --install $(QT6BASE_BUILDDIR)
-endef
-
-define QT6BASE_INSTALL_TARGET_CMDS
-	$(TARGET_MAKE_ENV) DESTDIR=$(TARGET_DIR) $(BR2_CMAKE) --install $(QT6BASE_BUILDDIR)
-endef
+	-DFEATURE_vaes=OFF
 
 HOST_QT6BASE_DEPENDENCIES = \
-	host-ninja \
 	host-double-conversion \
 	host-libb2 \
 	host-pcre2 \
 	host-zlib
-# batocera - gui, concurrent, sql, testlib & network = ON for other Qt6 packages
+# batocera - concurrent & dbus on
 HOST_QT6BASE_CONF_OPTS = \
-	-GNinja \
-	-DFEATURE_gui=ON \
 	-DFEATURE_concurrent=ON \
 	-DFEATURE_xml=ON \
-	-DFEATURE_sql=ON \
-	-DFEATURE_testlib=ON \
-	-DFEATURE_network=ON \
-	-DFEATURE_dbus=OFF \
+	-DFEATURE_dbus=ON \
 	-DFEATURE_icu=OFF \
 	-DFEATURE_glib=OFF \
 	-DFEATURE_system_doubleconversion=ON \
 	-DFEATURE_system_libb2=ON \
 	-DFEATURE_system_pcre2=ON \
-	-DFEATURE_system_zlib=ON \
-	-DQT_BUILD_TESTS_BY_DEFAULT=OFF \
-    -DQT_BUILD_EXAMPLES_BY_DEFAULT=OFF
+	-DFEATURE_system_zlib=ON
 
-# batocera disable opengl when building host-qt6base
+# We need host-qt6base with Gui support when building host-qt6shadertools,
+# otherwise the build is skipped and no qsb host tool is generated.
+# qt6shadertools fail to build if qsb is not available.
+ifeq ($(BR2_PACKAGE_HOST_QT6BASE_GUI),y)
+# batocera - print & widgets on
 HOST_QT6BASE_CONF_OPTS += \
-	-DINPUT_opengl=no
+	-DFEATURE_gui=ON \
+	-DFEATURE_freetype=OFF \
+	-DFEATURE_vulkan=OFF \
+	-DFEATURE_linuxfb=ON \
+	-DFEATURE_xcb=OFF \
+	-DFEATURE_opengl=OFF -DINPUT_opengl=no \
+	-DFEATURE_harfbuzz=OFF \
+	-DFEATURE_png=OFF \
+	-DFEATURE_gif=OFF \
+	-DFEATURE_jpeg=OFF \
+	-DFEATURE_printsupport=ON \
+	-DFEATURE_kms=OFF \
+	-DFEATURE_fontconfig=OFF \
+	-DFEATURE_widgets=ON \
+	-DFEATURE_libinput=OFF \
+	-DFEATURE_tslib=OFF \
+	-DFEATURE_eglfs=OFF
+else
+HOST_QT6BASE_CONF_OPTS += -DFEATURE_gui=OFF
+endif
 
-define HOST_QT6BASE_BUILD_CMDS
-	$(HOST_MAKE_ENV) $(BR2_CMAKE) --build $(HOST_QT6BASE_BUILDDIR)
-endef
+# The Network module is explicitly required by qt6tools.
+ifeq ($(BR2_PACKAGE_HOST_QT6BASE_NETWORK),y)
+HOST_QT6BASE_CONF_OPTS += -DFEATURE_network=ON
+else
+HOST_QT6BASE_CONF_OPTS += -DFEATURE_network=OFF
+endif
 
-define HOST_QT6BASE_INSTALL_CMDS
-	$(HOST_MAKE_ENV) $(BR2_CMAKE) --install $(HOST_QT6BASE_BUILDDIR)
-endef
+# We need host qt6base with Sql support for host-qt6tools to generate the
+# qhelpgenerator host tool. qt6tools will fail to build if qhelpgenerator is not
+# available.
+ifeq ($(BR2_PACKAGE_HOST_QT6BASE_SQL),y)
+HOST_QT6BASE_CONF_OPTS += -DFEATURE_sql=ON
+else
+HOST_QT6BASE_CONF_OPTS += -DFEATURE_sql=OFF
+endif
+
+# We need host-qt6base with Testlib support when building host-qt6declarative
+# with QuickTest support. QuickTest support is further required for building the
+# qmltestrunner host tool. qt6declarative will fail to build if qmltestrunner is
+# not available.
+ifeq ($(BR2_PACKAGE_HOST_QT6BASE_TEST),y)
+HOST_QT6BASE_CONF_OPTS += -DFEATURE_testlib=ON
+else
+HOST_QT6BASE_CONF_OPTS += -DFEATURE_testlib=OFF
+endif
 
 # Conditional blocks below are ordered by alphabetic ordering of the
 # BR2_PACKAGE_* option.
@@ -163,30 +179,35 @@ QT6BASE_CONF_OPTS += \
 	-DFEATURE_vulkan=OFF
 QT6BASE_DEPENDENCIES += freetype
 
+ifeq ($(BR2_PACKAGE_QT6BASE_VULKAN),y)
+QT6BASE_DEPENDENCIES   += vulkan-headers vulkan-loader
+QT6BASE_CONFIGURE_OPTS += -DFEATURE_vulkan=ON
+else
+QT6BASE_CONFIGURE_OPTS += -DFEATURE_vulkan=OFF
+endif
+
 ifeq ($(BR2_PACKAGE_QT6BASE_LINUXFB),y)
 QT6BASE_CONF_OPTS += -DFEATURE_linuxfb=ON
 else
 QT6BASE_CONF_OPTS += -DFEATURE_linuxfb=OFF
 endif
 
-# batocera - add xinput
 ifeq ($(BR2_PACKAGE_QT6BASE_XCB),y)
 QT6BASE_CONF_OPTS += \
 	-DFEATURE_xcb=ON \
 	-DFEATURE_xcb_xlib=ON \
 	-DFEATURE_xkbcommon=ON \
 	-DFEATURE_xkbcommon_x11=ON \
-	-DFEATURE_system_xcb_xinput=ON
-# batocera - add cursor
+	-DFEATURE_system_xcb_xinput=ON # batocera
 QT6BASE_DEPENDENCIES += \
 	libxcb \
 	libxkbcommon \
-	xcb-util-cursor \
 	xcb-util-wm \
 	xcb-util-image \
 	xcb-util-keysyms \
 	xcb-util-renderutil \
-	xlib_libX11
+	xlib_libX11 \
+	xcb-util-cursor # batocera
 else
 QT6BASE_CONF_OPTS += -DFEATURE_xcb=OFF
 endif
@@ -253,13 +274,8 @@ else
 QT6BASE_CONF_OPTS += -DFEATURE_fontconfig=OFF
 endif
 
-# batocera - add libXext
 ifeq ($(BR2_PACKAGE_QT6BASE_WIDGETS),y)
 QT6BASE_CONF_OPTS += -DFEATURE_widgets=ON
-
-ifeq ($(BR2_PACKAGE_XSERVER_XORG_SERVER),y)
-QT6BASE_DEPENDENCIES += xlib_libXext
-endif
 
 # only enable gtk support if libgtk3 X11 backend is enabled
 ifeq ($(BR2_PACKAGE_LIBGTK3)$(BR2_PACKAGE_LIBGTK3_X11),yy)
@@ -295,10 +311,15 @@ QT6BASE_CONF_OPTS += -DFEATURE_eglfs=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_QT6BASE_OPENGL_DESKTOP),y)
-QT6BASE_CONF_OPTS += -DFEATURE_opengl=ON -DFEATURE_opengl_desktop=ON
+QT6BASE_CONF_OPTS += \
+	-DFEATURE_opengl=ON \
+	-DFEATURE_opengl_desktop=ON
 QT6BASE_DEPENDENCIES += libgl
 else ifeq ($(BR2_PACKAGE_QT6BASE_OPENGL_ES2),y)
-QT6BASE_CONF_OPTS += -DFEATURE_opengl=ON -DFEATURE_opengles2=ON
+QT6BASE_CONF_OPTS += \
+	-DFEATURE_opengl=ON \
+	-DFEATURE_opengles2=ON \
+	-DFEATURE_opengl_desktop=OFF
 QT6BASE_DEPENDENCIES += libgles
 else
 QT6BASE_CONF_OPTS += -DFEATURE_opengl=OFF -DINPUT_opengl=no
@@ -349,7 +370,7 @@ QT6BASE_CONF_OPTS += -DFEATURE_sql_db2=OFF -DFEATURE_sql_ibase=OFF -DFEATURE_sql
 
 ifeq ($(BR2_PACKAGE_QT6BASE_MYSQL),y)
 QT6BASE_CONF_OPTS += -DFEATURE_sql_mysql=ON
-QT6BASE_DEPENDENCIES += mysql
+QT6BASE_DEPENDENCIES += mariadb
 else
 QT6BASE_CONF_OPTS += -DFEATURE_sql_mysql=OFF
 endif
@@ -403,6 +424,11 @@ QT6BASE_DEPENDENCIES += zstd
 else
 QT6BASE_CONF_OPTS += -DFEATURE_zstd=OFF
 endif
+
+define QT6BASE_RM_USR_MKSPECS
+	$(Q)rm -rf $(TARGET_DIR)/usr/mkspecs
+endef
+QT6BASE_TARGET_FINALIZE_HOOKS += QT6BASE_RM_USR_MKSPECS
 
 $(eval $(cmake-package))
 $(eval $(host-cmake-package))
