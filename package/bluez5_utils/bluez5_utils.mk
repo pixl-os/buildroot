@@ -22,7 +22,7 @@ BLUEZ5_UTILS_DEPENDENCIES = \
 	dbus \
 	libglib2
 
-# pixl need overlay config force --localstatedir
+# pixl need overlay config force --localstatedir=/overlay/.configs/ 
 BLUEZ5_UTILS_CONF_OPTS = \
 	--enable-library \
 	--disable-cups \
@@ -31,8 +31,8 @@ BLUEZ5_UTILS_CONF_OPTS = \
 	--disable-lsan \
 	--disable-ubsan \
 	--disable-pie \
-	--localstatedir=/overlay/.configs/ \
-	--with-dbusconfdir=/etc
+	--with-dbusconfdir=/usr/share \
+	--localstatedir=/overlay/.configs/ 
 
 ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_OBEX),y)
 BLUEZ5_UTILS_CONF_OPTS += --enable-obex
@@ -209,7 +209,7 @@ define BLUEZ5_UTILS_INSTALL_CONF_FILES
 		$(INSTALL) -D -m 755 $$i $(TARGET_DIR)/etc/bluetooth/ ; \
 	done
 endef
-BLUEZ5_UTILS_POST_INSTALL_TARGET_HOOKS += BLUEZ5_UTILS_INSTALL_CONF_FILES
+#BLUEZ5_UTILS_POST_INSTALL_TARGET_HOOKS += BLUEZ5_UTILS_INSTALL_CONF_FILES
 
 define BLUEZ5_UTILS_INSTALL_INIT_SYSV
 	$(INSTALL) -m 0755 -D package/bluez5_utils/S40bluetoothd \
