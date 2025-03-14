@@ -83,7 +83,7 @@ HOST_QT6BASE_DEPENDENCIES = \
 	host-libb2 \
 	host-pcre2 \
 	host-zlib
-# pixL need to force ON: concurrent, dbus, gui, testlib, printsupport
+# pixL need to force ON: concurrent, dbus, gui, testlib, printsupport, eglfs
 # widgets, network, sql
 HOST_QT6BASE_CONF_OPTS = \
 	-DFEATURE_gui=ON \
@@ -100,7 +100,8 @@ HOST_QT6BASE_CONF_OPTS = \
 	-DFEATURE_system_doubleconversion=ON \
 	-DFEATURE_system_libb2=ON \
 	-DFEATURE_system_pcre2=ON \
-	-DFEATURE_system_zlib=ON
+	-DFEATURE_system_zlib=ON \
+ 	-DFEATURE_eglfs=ON
 
 # We need host-qt6base with Gui support when building host-qt6shadertools,
 # otherwise the build is skipped and no qsb host tool is generated.
