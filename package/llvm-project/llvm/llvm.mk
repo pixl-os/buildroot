@@ -19,17 +19,21 @@ LLVM_DEPENDENCIES = host-llvm
 # pixL Patch for take CMakePolicy.cmake into /host/lib/cmake/llvm
 define LLVM_CMAKELIST_FIX_POLICY
 	sed -i -r '6s|.*/Modules/CMakePolicy.cmake.*|include($(HOST_DIR)/lib/cmake/llvm/CMakePolicy.cmake|g' $(@D)/CMakeLists.txt
+	sed -i -r '18s|LLVM_COMMON_CMAKE_UTILS|HOST_DIR|g' $(@D)/CMakeLists.txt
 endef
 HOST_LLVM_PRE_CONFIGURE_HOOKS = LLVM_CMAKELIST_FIX_POLICY
 LLVM_PRE_CONFIGURE_HOOKS= LLVM_CMAKELIST_FIX_POLICY
 
 # Path to cmake modules from host-llvm-cmake
 HOST_LLVM_CONF_OPTS += -DCMAKE_MODULE_PATH=$(HOST_DIR)/lib/cmake/llvm
+# pixL add LLVM_COMMON_CMAKE_UTILS
+HOST_LLVM_CONF_OPTS += -DLLVM_COMMON_CMAKE_UTILS=$(HOST_DIR)/lib/cmake/llvm
 LLVM_CONF_OPTS += -DCMAKE_MODULE_PATH=$(HOST_DIR)/lib/cmake/llvm
 
-# Assembly files for x64 in lib/Support/BLAKE3 need to be compiled
-# by a C compiler
-HOST_LLVM_CONF_OPTS += -DCMAKE_ASM_COMPILER="$(CMAKE_HOST_C_COMPILER)"
+# # Assembly files for x64 in lib/Support/BLAKE3 need to be compiled
+# # by a C compiler
+# HOST_LLVM_CONF_OPTS += -DCMAKE_ASM_COMPILER="$(CMAKE_HOST_C_COMPILER)"
++LLVM_CONF_OPTS += -DLLVM_COMMON_CMAKE_UTILS=$(HOST_DIR)/lib/cmake/llvm
 
 # Don't build clang libcxx libcxxabi lldb compiler-rt lld polly as llvm subprojects
 # This flag assumes that projects are checked out side-by-side and not nested
@@ -238,6 +242,13 @@ HOST_LLVM_CONF_OPTS += -DLLVM_ENABLE_RTTI=OFF
 LLVM_CONF_OPTS += -DLLVM_ENABLE_RTTI=OFF
 endif
 
+HOST_LLVM_CONF_OPTS += -DLLVM_ENABLE_DUMP=OFF
+ifeq ($(BR2_PACKAGE_LLVM_DUMP),y)
+LLVM_CONF_OPTS += -DLLVM_ENABLE_DUMP=ON
+else
+LLVM_CONF_OPTS += -DLLVM_ENABLE_DUMP=OFF
+endif
+
 # Compiler-rt not in the source tree.
 # llvm runtime libraries are not in the source tree.
 # Polly is not in the source tree.
@@ -259,6 +270,7 @@ LLVM_CONF_OPTS += \
 	-DLLVM_ENABLE_PEDANTIC=ON \
 	-DLLVM_ENABLE_WERROR=OFF
 
+# pixL - add perf & intel options
 HOST_LLVM_CONF_OPTS += \
 	-DLLVM_BUILD_EXAMPLES=OFF \
 	-DLLVM_BUILD_DOCS=OFF \
@@ -270,7 +282,11 @@ HOST_LLVM_CONF_OPTS += \
 	-DLLVM_INCLUDE_DOCS=OFF \
 	-DLLVM_INCLUDE_GO_TESTS=OFF \
 	-DLLVM_INCLUDE_TESTS=OFF \
-	-DLLVM_INCLUDE_BENCHMARKS=OFF
+	-DLLVM_INCLUDE_BENCHMARKS=OFF \
+	-DLLVM_USE_PERF=ON \
+	-DLLVM_USE_INTEL_JITEVENTS=ON
+
+# pixL - add perf & intel options
 LLVM_CONF_OPTS += \
 	-DLLVM_BUILD_EXAMPLES=OFF \
 	-DLLVM_BUILD_DOCS=OFF \
@@ -282,7 +298,9 @@ LLVM_CONF_OPTS += \
 	-DLLVM_INCLUDE_DOCS=OFF \
 	-DLLVM_INCLUDE_GO_TESTS=OFF \
 	-DLLVM_INCLUDE_TESTS=OFF \
-	-DLLVM_INCLUDE_BENCHMARKS=OFF
+	-DLLVM_INCLUDE_BENCHMARKS=OFF \
+	-DLLVM_USE_PERF=ON \
+	-DLLVM_USE_INTEL_JITEVENTS=ON
 
 # Copy llvm-config (host variant) to STAGING_DIR
 # llvm-config (host variant) returns include and lib directories
