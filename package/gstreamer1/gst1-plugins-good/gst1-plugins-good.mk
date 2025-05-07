@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_PLUGINS_GOOD_VERSION = 1.22.6
+GST1_PLUGINS_GOOD_VERSION = 1.24.11
 GST1_PLUGINS_GOOD_SOURCE = gst-plugins-good-$(GST1_PLUGINS_GOOD_VERSION).tar.xz
 GST1_PLUGINS_GOOD_SITE = https://gstreamer.freedesktop.org/src/gst-plugins-good
 GST1_PLUGINS_GOOD_LICENSE_FILES = COPYING
@@ -27,6 +27,10 @@ GST1_PLUGINS_GOOD_CONF_OPTS = \
 	-Dosxvideo=disabled \
 	-Daalib=disabled \
 	-Dlibcaca=disabled \
+	-Damrnb=disabled \
+	-Damrwbdec=disabled \
+	-Dsoup=disabled \
+	-Dximagesrc-navigation=disabled \
 	-Ddoc=disabled
 
 # Options which require currently unpackaged libraries
@@ -60,7 +64,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_GOOD_ADAPTIVEMUX2),y)
 GST1_PLUGINS_GOOD_CONF_OPTS += -Dadaptivedemux2=enabled
-GST1_PLUGINS_GOOD_DEPENDENCIES += libsoup libxml2
+GST1_PLUGINS_GOOD_DEPENDENCIES += libsoup3 libxml2
 else
 GST1_PLUGINS_GOOD_CONF_OPTS += -Dadaptivedemux2=disabled
 endif
@@ -357,13 +361,9 @@ endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_QMLGL),y)
 GST1_PLUGINS_GOOD_CONF_OPTS += -Dqt5=enabled
-GST1_PLUGINS_GOOD_DEPENDENCIES += qt5declarative
+GST1_PLUGINS_GOOD_DEPENDENCIES += qt5declarative qt5tools
 ifeq ($(BR2_PACKAGE_QT5BASE_XCB),y)
 GST1_PLUGINS_GOOD_DEPENDENCIES += qt5x11extras
-endif
-#added here to force build of QT5TOOLS
-ifeq ($(BR2_PACKAGE_QT5TOOLS),y)
-GST1_PLUGINS_GOOD_DEPENDENCIES += qt5tools
 endif
 else
 GST1_PLUGINS_GOOD_CONF_OPTS += -Dqt5=disabled
@@ -457,7 +457,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_SOUPHTTPSRC),y)
 GST1_PLUGINS_GOOD_CONF_OPTS += -Dsoup=enabled
-GST1_PLUGINS_GOOD_DEPENDENCIES += libsoup
+GST1_PLUGINS_GOOD_DEPENDENCIES += libsoup3
 else
 GST1_PLUGINS_GOOD_CONF_OPTS += -Dsoup=disabled
 endif

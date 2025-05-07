@@ -1,6 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file (focus on change done on pixL-master branch).
 
+## [pixl-2023.08.2-base] - 2025-05-07
+- update:
+	- update QT5 version from 5.15.10 to QT 5.15.14
+	- update GStreamer version from 1.22.6 to 1.24.11
+	- update x11 version from 21.1.8 to 21.1.16
+	- update mesa3d version from 23.1.4 to 24.0.9 (adding AMD part also)
+	- update libdrm version from 2.4.115 to 2.4.124
+	- update meson version from 1.1.1 to 1.7.0
+
 ## [pixl-2023.08.2-base] - 2024-09-16
 - update :
 	- add vulkan-headers 1.3.270 -> 1.3.273
