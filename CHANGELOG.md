@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file (focus on change done on pixL-master branch).
 
+## [pixl-2023.08.2-base] - 2025-XX-XX
+- fixes:
+	- remove wrong/unused parts for vulkan-tools
+- update:
+	- update to vulkan v1.3.297 version to match better with Mesa3D 24.2.1
+
 ## [pixl-2023.08.2-base] - 2025-05-07
 - update:
 	- update QT5 version from 5.15.10 to QT 5.15.14
