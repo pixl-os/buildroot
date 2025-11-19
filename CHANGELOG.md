@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file (focus on ch
 ## [pixl-2023.08.2-base] - 2025-XX-XX
 - fixes:
 	- remove wrong/unused parts for vulkan-tools
+	- add host lidrm as expected by mesa3d now to build
 - update:
 	- update to vulkan v1.3.297 version to match better with Mesa3D 24.2.1
 	- bump spirv-llvm-translator to v18.1.0 (need v18.X.X to match with LLVM)
