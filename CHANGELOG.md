@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file (focus on ch
 	- update to vulkan v1.3.297 version to match better with Mesa3D 24.2.1
 	- bump spirv-llvm-translator to v18.1.0 (need v18.X.X to match with LLVM)
 	- bump llvm-project to 18.1.2 as expected ny mesa3d now to build
+	- bump wayland-protocols to v1.36 to be upper than v1.34
 
 ## [pixl-2023.08.2-base] - 2025-05-07
 - update:
