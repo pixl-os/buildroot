@@ -5,7 +5,9 @@
 ################################################################################
 
 # When updating the version, please also update mesa3d-headers
-MESA3D_VERSION = 24.0.9
+MESA3D_VERSION = 24.2.1
+GLVND_TRUE = enabled
+GLVND_FALSE = disabled
 MESA3D_SOURCE = mesa-$(MESA3D_VERSION).tar.xz
 MESA3D_SITE = https://archive.mesa3d.org
 MESA3D_LICENSE = MIT, SGI, Khronos
@@ -21,12 +23,16 @@ MESA3D_DEPENDENCIES = \
 	host-bison \
 	host-flex \
 	host-python-mako \
+	host-python-pyyaml \
 	expat \
 	libdrm \
 	zlib
 
 MESA3D_CONF_OPTS = \
 	-Dgallium-omx=disabled \
+	-Dgallium-rusticl=false \
+	-Dmicrosoft-clc=disabled \
+	-Dopencl-spirv=false \
 	-Dpower8=disabled
 
 ifeq ($(BR2_PACKAGE_MESA3D_DRIVER)$(BR2_PACKAGE_XORG7),yy)
@@ -128,6 +134,19 @@ MESA3D_CONF_OPTS += \
 	-Dshared-glapi=enabled \
 	-Dgallium-drivers=$(subst $(space),$(comma),$(MESA3D_GALLIUM_DRIVERS-y)) \
 	-Dgallium-extra-hud=true
+endif
+
+ifeq ($(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_ETNAVIV),y)
+MESA3D_DEPENDENCIES += host-python-pycparser
+endif
+
+ifeq ($(BR2_PACKAGE_MESA3D_VULKAN_DRIVER_INTEL),y)
+MESA3D_DEPENDENCIES += host-python-ply
+endif
+
+ifeq ($(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_IRIS),y)
+MESA3D_CONF_OPTS += -Dintel-clc=system
+MESA3D_DEPENDENCIES += host-mesa3d spirv-tools spirv-llvm-translator
 endif
 
 ifeq ($(BR2_PACKAGE_MESA3D_VULKAN_DRIVER),)
@@ -253,14 +272,36 @@ MESA3D_CFLAGS += -mlong-jump-table-offsets
 endif
 
 ifeq ($(BR2_PACKAGE_LIBGLVND),y)
-ifneq ($(BR2_PACKAGE_MESA3D_OPENGL_GLX)$(BR2_PACKAGE_MESA3D_OPENGL_EGL),)
-MESA3D_DEPENDENCIES += libglvnd
-MESA3D_CONF_OPTS += -Dglvnd=true
+    ifneq ($(BR2_PACKAGE_MESA3D_OPENGL_GLX)$(BR2_PACKAGE_MESA3D_OPENGL_EGL),)
+        MESA3D_DEPENDENCIES += libglvnd
+        MESA3D_CONF_OPTS += -Dglvnd=$(GLVND_TRUE)
+    else
+        MESA3D_CONF_OPTS += -Dglvnd=$(GLVND_FALSE)
+    endif
 else
-MESA3D_CONF_OPTS += -Dglvnd=false
-endif
-else
-MESA3D_CONF_OPTS += -Dglvnd=false
+    MESA3D_CONF_OPTS += -Dglvnd=$(GLVND_FALSE)
 endif
 
+HOST_MESA3D_CONF_OPTS = \
+	-Dgallium-omx=disabled \
+	-Dpower8=disabled \
+	-Dgallium-drivers="" \
+	-Dvulkan-drivers="" \
+	-Dglx=disabled \
+	-Dplatforms="" \
+	-Dintel-clc=enabled \
+	-Dllvm=enabled \
+	-Dinstall-intel-clc=true
+
+HOST_MESA3D_DEPENDENCIES = \
+	host-libclc \
+	host-spirv-tools \
+	host-spirv-llvm-translator \
+	host-libdrm \
+	host-python-mako \
+	host-python-pyyaml \
+	host-spirv-tools
+
+
 $(eval $(meson-package))
+$(eval $(host-meson-package))
