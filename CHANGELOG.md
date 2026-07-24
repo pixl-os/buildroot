@@ -1,6 +1,28 @@
 # Change Log
 All notable changes to this project will be documented in this file (focus on change done on pixL-master branch).
 
+## [pixL-master] - 2026-XX-XX
+- stop to be based from a specific buidroot version now ! master branch is "pixL-master"
+- update:
+	- use vulkan v1.3.297 version to match better with Mesa3D 24.2.1
+	- bump spirv-llvm-translator to v18.1.0 (need v18.X.X to match with LLVM)
+	- bump llvm-project to 18.1.2 as expected ny mesa3d now to build
+	- bump wayland-protocols to v1.36 to be upper than v1.34
+	- add host lidrm as expected by mesa3d now to build
+	- update Mesa3D version from 24.0.9 to 24.2.1
+	- add QT5 quick 3D package for QT 5.15.14
+
+## [pixl-2023.08.2-base] - 2025-XX-XX
+- fixes:
+	- remove wrong/unused parts for vulkan-tools
+	- add host lidrm as expected by mesa3d now to build
+- update:
+	- update to vulkan v1.3.297 version to match better with Mesa3D 24.2.1
+	- bump spirv-llvm-translator to v18.1.0 (need v18.X.X to match with LLVM)
+	- bump llvm-project to 18.1.2 as expected ny mesa3d now to build
+	- bump wayland-protocols to v1.36 to be upper than v1.34
+	- bump mesa3d from 24.0.9 to 24.2.1
+
 ## [pixl-2023.08.2-base] - 2025-05-07
 - update:
 	- update QT5 version from 5.15.10 to QT 5.15.14
