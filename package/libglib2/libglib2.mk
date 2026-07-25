@@ -45,7 +45,7 @@ HOST_LIBGLIB2_DEPENDENCIES = \
 	host-zlib
 
 ifeq ($(BR2_PACKAGE_HOST_GOBJECT_INTROSPECTION),y)
-HOST_LIBGLIB2_CONF_OPTS += -Dintrospection=enabled
+HOST_LIBGLIB2_CONF_OPTS += -Dintrospection=disabled
 HOST_LIBGLIB2_DEPENDENCIES += host-gobject-introspection
 else
 HOST_LIBGLIB2_CONF_OPTS += -Dintrospection=disabled
@@ -68,8 +68,8 @@ LIBGLIB2_MESON_EXTRA_PROPERTIES = \
 	have_unix98_printf=true
 
 ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
-LIBGLIB2_CONF_OPTS += -Dintrospection=enabled
-LIBGLIB2_DEPENDENCIES += gobject-introspection host-qemu
+LIBGLIB2_CONF_OPTS += -Dintrospection=disabled
+LIBGLIB2_DEPENDENCIES += host-gobject-introspection host-qemu
 LIBGLIB2_MESON_EXTRA_BINARIES = exe_wrapper='$(@D)/libglib2-qemu-wrapper'
 define LIBGLIB2_INSTALL_QEMUWARPPER
 	$(INSTALL) -D -m 755 $(LIBGLIB2_PKGDIR)/libglib2-qemu-wrapper.in \
@@ -94,7 +94,7 @@ LIBGLIB2_DEPENDENCIES += libiconv
 endif
 
 ifeq ($(BR2_PACKAGE_LIBSELINUX),y)
-LIBGLIB2_CONF_OPTS += -Dselinux=enabled -Dxattr=true
+LIBGLIB2_CONF_OPTS += -Dselinux=enabled -Dxattr=true -Dintrospection=disabled
 LIBGLIB2_DEPENDENCIES += libselinux
 else
 LIBGLIB2_CONF_OPTS += -Dselinux=disabled -Dxattr=false
