@@ -558,7 +558,7 @@ include $(BR2_EXTERNAL_MKS)
 # all the dependencies selected in the config file.
 #
 ifeq ($(MAKECMDGOALS),)
-BR_FORCE_CHECK_DEPENDENCIES = YES
+BR_FORCE_CHECK_DEPENDENCIES = NO
 endif
 
 ifeq ($(BR_FORCE_CHECK_DEPENDENCIES),YES)
