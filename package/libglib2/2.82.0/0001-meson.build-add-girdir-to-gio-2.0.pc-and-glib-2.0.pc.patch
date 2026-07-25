@@ -1,4 +1,4 @@
-From ff3db531608eb0f9de8a88c1bc34fe0f1d93121c Mon Sep 17 00:00:00 2001
+From 3fcd5f431dee9909b6bcbd9b8b61d4b1fe4b5f92 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Fri, 12 Nov 2021 18:01:05 +0100
 Subject: [PATCH] meson.build: add girdir to gio-2.0.pc and glib-2.0.pc
@@ -14,6 +14,10 @@ Fixes:
  - http://autobuild.buildroot.org/results/3088ef32b03e0bb984291b1227b187f1ff816eb7
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+[Fiona: refresh for glib 2.80.4]
+Signed-off-by: Fiona Klute (WIWA) <fiona.klute@gmx.de>
 Upstream: Never submitted
 ---
  gio/meson.build  | 1 +
@@ -21,29 +25,29 @@ Upstream: Never submitted
  2 files changed, 2 insertions(+)
 
 diff --git a/gio/meson.build b/gio/meson.build
-index 29473d26b..112d4ada9 100644
+index 59c2b0f..5120537 100644
 --- a/gio/meson.build
 +++ b/gio/meson.build
-@@ -841,6 +841,7 @@ pkg.generate(libgio,
-   variables : ['datadir=' + join_paths('${prefix}', get_option('datadir')),
-                'schemasdir=' + join_paths('${datadir}', schemas_subdir),
-                'bindir=' + join_paths('${prefix}', get_option('bindir')),
-+               'girdir=' + join_paths('${libdir}', '../share/gir-1.0'),
-                'giomoduledir=' + pkgconfig_giomodulesdir,
-                'gio=' + join_paths('${bindir}', 'gio'),
-                'gio_querymodules=' + join_paths('${bindir}', 'gio-querymodules'),
+@@ -885,6 +885,7 @@ pkg.generate(libgio,
+   variables : [
+     'schemasdir=' + '${datadir}' / schemas_subdir,
+     'dtdsdir=' + '${datadir}' / dtds_subdir,
++    'girdir=' + join_paths('${libdir}', '../share/gir-1.0'),
+     'giomoduledir=' + pkgconfig_giomodulesdir,
+     'gio=' + '${bindir}' / 'gio',
+     'gio_querymodules=' + pkgconfig_multiarch_bindir / 'gio-querymodules',
 diff --git a/glib/meson.build b/glib/meson.build
-index f78f32969..6c5486699 100644
+index d2efeba..a69532b 100644
 --- a/glib/meson.build
 +++ b/glib/meson.build
-@@ -384,6 +384,7 @@ pkg.generate(libglib,
+@@ -447,6 +447,7 @@ pkg.generate(libglib,
    subdirs : ['glib-2.0'],
    extra_cflags : ['-I${libdir}/glib-2.0/include'] + win32_cflags,
-   variables : ['bindir=' + join_paths('${prefix}', get_option('bindir')),
-+               'girdir=' + join_paths('${libdir}', '../share/gir-1.0'),
-                'glib_genmarshal=' + join_paths('${bindir}', 'glib-genmarshal'),
-                'gobject_query=' + join_paths('${bindir}', 'gobject-query'),
-                'glib_mkenums=' + join_paths('${bindir}', 'glib-mkenums')],
+   variables : [
++    'girdir=' + join_paths('${libdir}', '../share/gir-1.0'),
+     'glib_genmarshal=' + '${bindir}' / 'glib-genmarshal',
+     'gobject_query=' + '${bindir}' / 'gobject-query',
+     'glib_mkenums=' + '${bindir}' / 'glib-mkenums',
 -- 
-2.33.0
+2.45.2
 
