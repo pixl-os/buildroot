@@ -16,25 +16,34 @@ LLVM_INSTALL_STAGING = YES
 HOST_LLVM_DEPENDENCIES = host-python3 host-llvm-cmake
 LLVM_DEPENDENCIES = host-llvm
 
-# pixL Patch for take CMakePolicy.cmake into /host/lib/cmake/llvm
-define LLVM_CMAKELIST_FIX_POLICY
-	sed -i -r '6s|.*/Modules/CMakePolicy.cmake.*|include($(HOST_DIR)/lib/cmake/llvm/CMakePolicy.cmake|g' $(@D)/CMakeLists.txt
+# pixL Patch: Fix paths in CMakeLists.txt (replace '/../cmake' with '/../host-llvm-cmake-$(LLVM_VERSION)')
+# already used for changes linked to kernel 6.4.14 & 6.18.16
+define LLVM_CMAKELIST_FIX_PATH
+	sed -i -e 's|/../cmake|/../host-llvm-cmake-$(LLVM_VERSION)|g' $(@D)/CMakeLists.txt
 endef
-HOST_LLVM_PRE_CONFIGURE_HOOKS = LLVM_CMAKELIST_FIX_POLICY
-LLVM_PRE_CONFIGURE_HOOKS= LLVM_CMAKELIST_FIX_POLICY
+HOST_LLVM_PRE_CONFIGURE_HOOKS += LLVM_CMAKELIST_FIX_PATH
+LLVM_PRE_CONFIGURE_HOOKS += LLVM_CMAKELIST_FIX_PATH
+
+# pixL Patch: Disable assembly implementations to avoid GNU assembler defsym errors in BLAKE3
+HOST_LLVM_CONF_OPTS += -DLLVM_DISABLE_ASSEMBLY_FILES=ON
+LLVM_CONF_OPTS += -DLLVM_DISABLE_ASSEMBLY_FILES=ON
 
 # Path to cmake modules from host-llvm-cmake
 HOST_LLVM_CONF_OPTS += -DCMAKE_MODULE_PATH=$(HOST_DIR)/lib/cmake/llvm
 LLVM_CONF_OPTS += -DCMAKE_MODULE_PATH=$(HOST_DIR)/lib/cmake/llvm
 
-# Assembly files for x64 in lib/Support/BLAKE3 need to be compiled
-# by a C compiler
-HOST_LLVM_CONF_OPTS += -DCMAKE_ASM_COMPILER="$(CMAKE_HOST_C_COMPILER)"
+HOST_LLVM_CONF_OPTS += -DLLVM_COMMON_CMAKE_UTILS=$(HOST_DIR)/lib/cmake/llvm
+LLVM_CONF_OPTS += -DLLVM_COMMON_CMAKE_UTILS=$(HOST_DIR)/lib/cmake/llvm
 
 # Don't build clang libcxx libcxxabi lldb compiler-rt lld polly as llvm subprojects
 # This flag assumes that projects are checked out side-by-side and not nested
 HOST_LLVM_CONF_OPTS += -DLLVM_ENABLE_PROJECTS=""
 LLVM_CONF_OPTS += -DLLVM_ENABLE_PROJECTS=""
+
+# LLVM_ENABLE_RUNTIMES for runtime components libcxx etc
+
+HOST_LLVM_CONF_OPTS += -DLLVM_ENABLE_RUNTIMES=""
+LLVM_CONF_OPTS += -DLLVM_ENABLE_RUNTIMES=""
 
 HOST_LLVM_CONF_OPTS += -DLLVM_CCACHE_BUILD=$(if $(BR2_CCACHE),ON,OFF)
 LLVM_CONF_OPTS += -DLLVM_CCACHE_BUILD=$(if $(BR2_CCACHE),ON,OFF)
@@ -134,10 +143,6 @@ LLVM_CONF_OPTS += -DENABLE_CRASH_OVERRIDES=ON
 HOST_LLVM_CONF_OPTS += -DLLVM_ENABLE_FFI=OFF
 LLVM_CONF_OPTS += -DLLVM_ENABLE_FFI=OFF
 
-# Disable terminfo database (needs ncurses libtinfo.so)
-HOST_LLVM_CONF_OPTS += -DLLVM_ENABLE_TERMINFO=OFF
-LLVM_CONF_OPTS += -DLLVM_ENABLE_TERMINFO=OFF
-
 # Enable thread support
 HOST_LLVM_CONF_OPTS += -DLLVM_ENABLE_THREADS=ON
 LLVM_CONF_OPTS += -DLLVM_ENABLE_THREADS=ON
@@ -161,6 +166,10 @@ LLVM_CONF_OPTS += -DLLVM_ENABLE_Z3_SOLVER=OFF
 # We don't use llvm for static only build, so enable PIC
 HOST_LLVM_CONF_OPTS += -DLLVM_ENABLE_PIC=ON
 LLVM_CONF_OPTS += -DLLVM_ENABLE_PIC=ON
+
+# Disable TFTLite integration
+HOST_LLVM_CONF_OPTS += -DLLVM_HAVE_TFLITE=""
+LLVM_CONF_OPTS += -DLLVM_HAVE_TFLITE=""
 
 # Default is Debug build, which requires considerably more disk space and
 # build time. Release build is selected for host and target because the linker
@@ -272,7 +281,6 @@ HOST_LLVM_CONF_OPTS += \
 	-DLLVM_ENABLE_SPHINX=OFF \
 	-DLLVM_INCLUDE_EXAMPLES=OFF \
 	-DLLVM_INCLUDE_DOCS=OFF \
-	-DLLVM_INCLUDE_GO_TESTS=OFF \
 	-DLLVM_INCLUDE_TESTS=OFF \
 	-DLLVM_INCLUDE_BENCHMARKS=OFF
 LLVM_CONF_OPTS += \
@@ -284,9 +292,27 @@ LLVM_CONF_OPTS += \
 	-DLLVM_ENABLE_SPHINX=OFF \
 	-DLLVM_INCLUDE_EXAMPLES=OFF \
 	-DLLVM_INCLUDE_DOCS=OFF \
-	-DLLVM_INCLUDE_GO_TESTS=OFF \
 	-DLLVM_INCLUDE_TESTS=OFF \
 	-DLLVM_INCLUDE_BENCHMARKS=OFF
+
+# pixl - Required for RPCS3
+ifeq ($(BR2_PACKAGE_LLVM_INTEL_JITEVENTS),y)
+HOST_LLVM_CONF_OPTS += \
+    -DLLVM_USE_INTEL_JITEVENTS=ON
+LLVM_CONF_OPTS += \
+    -DLLVM_USE_INTEL_JITEVENTS=ON
+else
+HOST_LLVM_CONF_OPTS += \
+    -DLLVM_USE_INTEL_JITEVENTS=OFF
+LLVM_CONF_OPTS += \
+    -DLLVM_USE_INTEL_JITEVENTS=OFF
+endif
+
+# pixl - Add LLVM_USE_PERF for RPCS3
+HOST_LLVM_CONF_OPTS += \
+    -DLLVM_USE_PERF=ON
+LLVM_CONF_OPTS += \
+    -DLLVM_USE_PERF=ON
 
 # Copy llvm-config (host variant) to STAGING_DIR
 # llvm-config (host variant) returns include and lib directories
