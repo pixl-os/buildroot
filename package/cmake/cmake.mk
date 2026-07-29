@@ -5,14 +5,17 @@
 ################################################################################
 
 # When updating the version, please also update BR2_HOST_CMAKE_AT_LEAST_X_Y
-CMAKE_VERSION_MAJOR = 3.27
-CMAKE_VERSION = $(CMAKE_VERSION_MAJOR).1
+CMAKE_VERSION_MAJOR = 3.30
+CMAKE_VERSION = $(CMAKE_VERSION_MAJOR).5
 CMAKE_SITE = https://cmake.org/files/v$(CMAKE_VERSION_MAJOR)
 CMAKE_LICENSE = BSD-3-Clause
 CMAKE_LICENSE_FILES = Copyright.txt
-CMAKE_CPE_ID_VENDOR = cmake_project
+CMAKE_CPE_ID_VALID = YES
 # Tool download MITM attack warning if using npm package to install cmake
 CMAKE_IGNORE_CVES = CVE-2016-10642
+
+# The package is a dependency to ccache so ccache cannot be a dependency
+HOST_CMAKE_ADD_CCACHE_DEPENDENCY = NO
 
 # CMake is a particular package:
 # * CMake can be built using the generic infrastructure or the cmake one.
@@ -49,6 +52,7 @@ HOST_CMAKE_CONFIGURE_OPTS = \
 	GCC="$(HOSTCC_NOCCACHE)" \
 	CXX="$(HOSTCXX_NOCCACHE)"
 
+# pixl - CMAKE_USE_OPENSSL = ON
 define HOST_CMAKE_CONFIGURE_CMDS
 	(cd $(@D); \
 		$(HOST_CMAKE_CONFIGURE_OPTS) \
@@ -58,7 +62,7 @@ define HOST_CMAKE_CONFIGURE_CMDS
 			-DCMAKE_C_FLAGS="$(HOST_CMAKE_CFLAGS)" \
 			-DCMAKE_CXX_FLAGS="$(HOST_CMAKE_CXXFLAGS)" \
 			-DCMAKE_EXE_LINKER_FLAGS="$(HOST_LDFLAGS)" \
-			-DCMAKE_USE_OPENSSL:BOOL=OFF \
+			-DCMAKE_USE_OPENSSL:BOOL=ON \
 			-DBUILD_CursesDialog=OFF \
 	)
 endef
