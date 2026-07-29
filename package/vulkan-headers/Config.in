@@ -1,6 +1,5 @@
 config BR2_PACKAGE_VULKAN_HEADERS
 	bool "vulkan-headers"
-	select BR2_PACKAGE_VULKAN_SAMPLES
 	help
 	  The Khronos official Vulkan header files and API
 	  registry.
