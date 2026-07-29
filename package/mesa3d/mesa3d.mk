@@ -33,10 +33,7 @@ MESA3D_CONF_OPTS = \
 	-Dmicrosoft-clc=disabled
 
 ifeq ($(BR2_PACKAGE_MESA3D_DRIVER)$(BR2_PACKAGE_XORG7),yy)
-MESA3D_CONF_OPTS += -Ddri3=enabled
 MESA3D_DEPENDENCIES += xlib_libxshmfence
-else
-MESA3D_CONF_OPTS += -Ddri3=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_MESA3D_LLVM),y)

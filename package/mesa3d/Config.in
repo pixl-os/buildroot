@@ -100,7 +100,6 @@ config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER
 config BR2_PACKAGE_MESA3D_VULKAN_DRIVER
 	bool
 	select BR2_PACKAGE_MESA3D_DRIVER
-	select BR2_PACKAGE_MESA3D_DRI3              if BR2_PACKAGE_XORG7
 
 config BR2_PACKAGE_MESA3D_VIDEO_CODEC
 	bool
@@ -357,7 +356,7 @@ comment "Vulkan drivers"
 config BR2_PACKAGE_MESA3D_VULKAN_DRIVER_BROADCOM
 	bool "Vulkan broadcom driver"
 	depends on BR2_arm || BR2_aarch64
-	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # dri3/libxshmfence
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libxshmfence
 	select BR2_PACKAGE_MESA3D_VULKAN_DRIVER
 	help
 	  Vulkan broadcom driver.
