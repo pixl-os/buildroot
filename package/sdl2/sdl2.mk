@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SDL2_VERSION = 2.28.5
+SDL2_VERSION = 2.32.10
 SDL2_SOURCE = SDL2-$(SDL2_VERSION).tar.gz
 SDL2_SITE = http://www.libsdl.org/release
 SDL2_LICENSE = Zlib
@@ -14,18 +14,15 @@ SDL2_CPE_ID_PRODUCT = simple_directmedia_layer
 SDL2_INSTALL_STAGING = YES
 SDL2_CONFIG_SCRIPTS = sdl2-config
 
-# pixL need pulseaudio and disable-hidapi
+# pixL need pulseaudio and vulkan
 SDL2_CONF_OPTS += \
-	--disable-hidapi \
 	--disable-rpath \
 	--disable-arts \
 	--disable-esd \
 	--disable-dbus \
-	--disable-pulseaudio \
 	--disable-video-vivante \
 	--disable-video-cocoa \
 	--disable-video-metal \
-	--disable-video-wayland \
 	--disable-video-dummy \
 	--disable-video-offscreen \
 	--disable-ime \
@@ -50,9 +47,12 @@ define SDL2_FIX_SDL2_CONFIG_CMAKE
 	$(SED) 's%"/usr"%$${PACKAGE_PREFIX_DIR}%' \
 		$(STAGING_DIR)/usr/lib/cmake/SDL2/sdl2-config.cmake
 endef
-SDL2_POST_INSTALL_STAGING_HOOKS += SDL2_FIX_SDL2_CONFIG_CMAKE
 
-# pixl need Fix SDL2 Configure Path # Batocera
+# pixl
+define SDL2_FIX_WAYLAND_SCANNER_PATH
+	sed -i "s+/usr/bin/wayland-scanner+$(HOST_DIR)/usr/bin/wayland-scanner+g" $(@D)/Makefile
+endef
+
 define SDL2_FIX_CONFIGURE_PATHS
 	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/config.log
 	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/config.status
@@ -60,17 +60,25 @@ define SDL2_FIX_CONFIGURE_PATHS
 	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/Makefile
 	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/sdl2-config
 	sed -i "s+/host/bin/\.\.+/host+g" $(@D)/sdl2.pc
+	sed -i "s+-I/.* ++g"              $(@D)/sdl2.pc
 endef
+
+SDL2_POST_CONFIGURE_HOOKS += SDL2_FIX_WAYLAND_SCANNER_PATH
 SDL2_POST_CONFIGURE_HOOKS += SDL2_FIX_CONFIGURE_PATHS
 
-# pixL add run autogen
-define SDL2_RUN_AUTOGEN
-	$(@D)/autogen.sh
-endef
-SDL2_PRE_CONFIGURE_HOOKS += SDL2_RUN_AUTOGEN
+SDL2_POST_INSTALL_STAGING_HOOKS += SDL2_FIX_SDL2_CONFIG_CMAKE
 
 # We must enable static build to get compilation successful.
 SDL2_CONF_OPTS += --enable-static
+
+# pixl - disable hidapi
+SDL2_CONF_OPTS += --disable-hidapi
+
+
+
+ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
+SDL2_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -marm"
+endif
 
 ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
 SDL2_DEPENDENCIES += udev
@@ -91,21 +99,6 @@ else
 SDL2_CONF_OPTS += --disable-3dnow
 endif
 
-ifeq ($(BR2_PACKAGE_SDL2_DIRECTFB),y)
-SDL2_DEPENDENCIES += directfb
-SDL2_CONF_OPTS += --enable-video-directfb
-SDL2_CONF_ENV = ac_cv_path_DIRECTFBCONFIG=$(STAGING_DIR)/usr/bin/directfb-config
-else
-SDL2_CONF_OPTS += --disable-video-directfb
-endif
-
-ifeq ($(BR2_PACKAGE_SDL2_OPENGLES)$(BR2_PACKAGE_RPI_USERLAND),yy)
-SDL2_DEPENDENCIES += rpi-userland
-SDL2_CONF_OPTS += --enable-video-rpi
-else
-SDL2_CONF_OPTS += --disable-video-rpi
-endif
-
 # x-includes and x-libraries must be set for cross-compiling
 # By default x_includes and x_libraries contains unsafe paths.
 # (/usr/X11R6/include and /usr/X11R6/lib)
@@ -124,13 +117,6 @@ SDL2_DEPENDENCIES += xlib_libXcursor
 SDL2_CONF_OPTS += --enable-video-x11-xcursor
 else
 SDL2_CONF_OPTS += --disable-video-x11-xcursor
-endif
-
-ifeq ($(BR2_PACKAGE_XLIB_LIBXINERAMA),y)
-SDL2_DEPENDENCIES += xlib_libXinerama
-SDL2_CONF_OPTS += --enable-video-x11-xinerama
-else
-SDL2_CONF_OPTS += --disable-video-x11-xinerama
 endif
 
 ifeq ($(BR2_PACKAGE_XLIB_LIBXI),y)
@@ -154,15 +140,15 @@ else
 SDL2_CONF_OPTS += --disable-video-x11-scrnsaver
 endif
 
-ifeq ($(BR2_PACKAGE_XLIB_LIBXXF86VM),y)
-SDL2_DEPENDENCIES += xlib_libXxf86vm
-SDL2_CONF_OPTS += --enable-video-x11-vm
-else
-SDL2_CONF_OPTS += --disable-video-x11-vm
-endif
-
 else
 SDL2_CONF_OPTS += --disable-video-x11 --without-x
+endif
+
+ifeq ($(BR2_PACKAGE_SDL2_WAYLAND),y)
+SDL2_DEPENDENCIES += libegl libxkbcommon wayland wayland-protocols
+SDL2_CONF_OPTS += --enable-video-wayland
+else
+SDL2_CONF_OPTS += --disable-video-wayland
 endif
 
 ifeq ($(BR2_PACKAGE_SDL2_OPENGL),y)
@@ -185,13 +171,6 @@ SDL2_CONF_OPTS += \
 	--disable-video-opengles2
 endif
 
-ifeq ($(BR2_PACKAGE_VULKAN_HEADERS),y)
-SDL2_DEPENDENCIES += vulkan-headers
-SDL2_CONF_OPTS += --enable-video-vulkan
-else
-SDL2_CONF_OPTS += --disable-video-vulkan
-endif
-
 ifeq ($(BR2_PACKAGE_ALSA_LIB),y)
 SDL2_DEPENDENCIES += alsa-lib
 SDL2_CONF_OPTS += --enable-alsa
@@ -199,7 +178,7 @@ else
 SDL2_CONF_OPTS += --disable-alsa
 endif
 
-# pixL need pulseaudio sdl2
+# pixL - need pulseaudio sdl2
 ifeq ($(BR2_PACKAGE_PULSEAUDIO),y)
 SDL2_DEPENDENCIES += pulseaudio
 SDL2_CONF_OPTS += --enable-pulseaudio
@@ -208,10 +187,31 @@ SDL2_CONF_OPTS += --disable-pulseaudio
 endif
 
 ifeq ($(BR2_PACKAGE_SDL2_KMSDRM),y)
-SDL2_DEPENDENCIES += libdrm libgbm libegl
+# batocera - needed because of 3aca3b603e8e68752f1846ccb54c8d53c22042d7
+ifeq ($(BR2_PACKAGE_HAS_LIBGBM),y)
+SDL2_DEPENDENCIES += libgbm
+endif
+ifeq ($(BR2_PACKAGE_HAS_LIBEGL),y)
+SDL2_DEPENDENCIES += libegl
+endif
+SDL2_DEPENDENCIES += libdrm
 SDL2_CONF_OPTS += --enable-video-kmsdrm
 else
 SDL2_CONF_OPTS += --disable-video-kmsdrm
+endif
+
+
+# pixl - libdecor
+ifeq ($(BR2_PACKAGE_LIBDECOR),y)
+SDL2_DEPENDENCIES += libdecor
+endif
+
+# pixl - enable/disable Vulkan support
+ifeq ($(BR2_PACKAGE_MESA3D_VULKAN_DRIVER)$(BR2_PACKAGE_VULKAN_LOADER),yy)
+SDL2_DEPENDENCIES += mesa3d vulkan-loader
+SDL2_CONF_OPTS += --enable-video-vulkan
+else
+SDL2_CONF_OPTS += --disable-video-vulkan
 endif
 
 $(eval $(autotools-package))
