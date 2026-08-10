@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FFMPEG_VERSION = 4.4.4
+FFMPEG_VERSION = 7.1.1
 FFMPEG_SOURCE = ffmpeg-$(FFMPEG_VERSION).tar.xz
 FFMPEG_SITE = https://ffmpeg.org/releases
 FFMPEG_INSTALL_STAGING = YES
@@ -32,11 +32,6 @@ FFMPEG_CONF_OPTS = \
 	--disable-gray \
 	--enable-swscale-alpha \
 	--disable-small \
-	--enable-dct \
-	--enable-fft \
-	--enable-mdct \
-	--enable-rdft \
-	--disable-crystalhd \
 	--disable-dxva2 \
 	--enable-runtime-cpudetect \
 	--disable-hardcoded-tables \
@@ -57,6 +52,11 @@ FFMPEG_CONF_OPTS = \
 	--disable-libvo-amrwbenc \
 	--disable-symver \
 	--disable-doc
+# pixl - add pulse audio support
+ifeq ($(BR2_PACKAGE_PULSEAUDIO),y)
+FFMPEG_CONF_OPTS += --enable-libpulse
+FFMPEG_DEPENDENCIES += pulseaudio
+endif
 
 FFMPEG_DEPENDENCIES += host-pkgconf
 
@@ -86,17 +86,21 @@ else
 FFMPEG_CONF_OPTS += --disable-ffplay
 endif
 
+ifeq ($(BR2_PACKAGE_JACK1),y)
+FFMPEG_CONF_OPTS += --enable-libjack
+FFMPEG_DEPENDENCIES += jack1
+else ifeq ($(BR2_PACKAGE_JACK2),y)
+FFMPEG_CONF_OPTS += --enable-libjack
+FFMPEG_DEPENDENCIES += jack2
+else
+FFMPEG_CONF_OPTS += --disable-libjack
+endif
+
 ifeq ($(BR2_PACKAGE_LIBV4L),y)
 FFMPEG_DEPENDENCIES += libv4l
 FFMPEG_CONF_OPTS += --enable-libv4l2
 else
 FFMPEG_CONF_OPTS += --disable-libv4l2
-endif
-
-ifeq ($(BR2_PACKAGE_FFMPEG_AVRESAMPLE),y)
-FFMPEG_CONF_OPTS += --enable-avresample
-else
-FFMPEG_CONF_OPTS += --disable-avresample
 endif
 
 ifeq ($(BR2_PACKAGE_FFMPEG_FFPROBE),y)
@@ -331,11 +335,14 @@ else
 FFMPEG_CONF_OPTS += --disable-libbluray
 endif
 
-ifeq ($(BR2_PACKAGE_INTEL_MEDIASDK),y)
-FFMPEG_CONF_OPTS += --enable-libmfx
+ifeq ($(BR2_PACKAGE_LIBVPL),y)
+FFMPEG_CONF_OPTS += --enable-libvpl --disable-libmfx
+FFMPEG_DEPENDENCIES += libvpl
+else ifeq ($(BR2_PACKAGE_INTEL_MEDIASDK),y)
+FFMPEG_CONF_OPTS += --disable-libvpl --enable-libmfx
 FFMPEG_DEPENDENCIES += intel-mediasdk
 else
-FFMPEG_CONF_OPTS += --disable-libmfx
+FFMPEG_CONF_OPTS += --disable-libvpl --disable-libmfx
 endif
 
 ifeq ($(BR2_PACKAGE_RTMPDUMP),y)
@@ -380,6 +387,12 @@ else
 FFMPEG_CONF_OPTS += --disable-iconv
 endif
 
+# pixl - add cuda & nvenc
+ifeq ($(BR2_PACKAGE_NVIDIA_OPEN_DRIVER_CUDA),y)
+FFMPEG_CONF_OPTS += --enable-cuda --enable-cuvid --enable-nvdec --enable-nvenc
+FFMPEG_DEPENDENCIES += nv-codec-headers
+endif
+
 # ffmpeg freetype support require fenv.h which is only
 # available/working on glibc.
 # The microblaze variant doesn't provide the needed exceptions
@@ -395,6 +408,20 @@ FFMPEG_CONF_OPTS += --enable-fontconfig
 FFMPEG_DEPENDENCIES += fontconfig
 else
 FFMPEG_CONF_OPTS += --disable-fontconfig
+endif
+
+ifeq ($(BR2_PACKAGE_HARFBUZZ),y)
+FFMPEG_CONF_OPTS += --enable-libharfbuzz
+FFMPEG_DEPENDENCIES += harfbuzz
+else
+FFMPEG_CONF_OPTS += --disable-libharfbuzz
+endif
+
+ifeq ($(BR2_PACKAGE_LIBFRIBIDI),y)
+FFMPEG_CONF_OPTS += --enable-libfribidi
+FFMPEG_DEPENDENCIES += libfribidi
+else
+FFMPEG_CONF_OPTS += --disable-libfribidi
 endif
 
 ifeq ($(BR2_PACKAGE_OPENJPEG),y)
@@ -505,6 +532,18 @@ else
 FFMPEG_CONF_OPTS += --disable-neon
 endif
 
+# pixl
+ifeq ($(BR2_PACKAGE_VULKAN_HEADERS)$(BR2_PACKAGE_VULKAN_LOADER)$(BR2_PACKAGE_SHADERC),yyy)
+FFMPEG_CONF_OPTS += --enable-vulkan --enable-libshaderc
+FFMPEG_DEPENDENCIES += vulkan-headers vulkan-loader shaderc
+else
+FFMPEG_CONF_OPTS += --disable-vulkan
+endif
+# pixl
+ifeq ($(BR2_PACKAGE_LIBLC3),y)
+FFMPEG_CONF_OPTS += --enable-liblc3
+FFMPEG_DEPENDENCIES += liblc3
+endif
 ifeq ($(BR2_mips)$(BR2_mipsel)$(BR2_mips64)$(BR2_mips64el),y)
 ifeq ($(BR2_MIPS_SOFT_FLOAT),y)
 FFMPEG_CONF_OPTS += --disable-mipsfpu
@@ -524,6 +563,11 @@ else ifeq ($(BR2_POWERPC_CPU_HAS_VSX):$(BR2_powerpc64le),y:y)
 FFMPEG_CONF_OPTS += --enable-altivec
 else
 FFMPEG_CONF_OPTS += --disable-altivec
+endif
+
+# Fix build failure on several missing assembly instructions
+ifeq ($(BR2_RISCV_32),y)
+FFMPEG_CONF_OPTS += --disable-rvv --disable-asm
 endif
 
 # Uses __atomic_fetch_add_4
@@ -550,6 +594,11 @@ endif
 FFMPEG_CFLAGS = $(TARGET_CFLAGS)
 
 ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_85180),y)
+FFMPEG_CONF_OPTS += --disable-optimizations
+FFMPEG_CFLAGS += -O0
+endif
+
+ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_68485),y)
 FFMPEG_CONF_OPTS += --disable-optimizations
 FFMPEG_CFLAGS += -O0
 endif
