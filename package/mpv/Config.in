@@ -18,6 +18,7 @@ config BR2_PACKAGE_MPV
 	select BR2_PACKAGE_FFMPEG
 	select BR2_PACKAGE_FFMPEG_SWSCALE
 	select BR2_PACKAGE_LIBASS
+	select BR2_PACKAGE_LIBPLACEBO # pixl
 	select BR2_PACKAGE_ZLIB
 	select BR2_PACKAGE_WAYLAND_PROTOCOLS if BR2_PACKAGE_WAYLAND
 	# Select xkbcommon for wayland to avoid being mysterious
@@ -29,6 +30,8 @@ config BR2_PACKAGE_MPV
 	select BR2_PACKAGE_XLIB_LIBXPRESENT if BR2_PACKAGE_XORG7
 	select BR2_PACKAGE_XLIB_LIBXSCRNSAVER if BR2_PACKAGE_XORG7
 	select BR2_PACKAGE_XLIB_LIBXRANDR if BR2_PACKAGE_XORG7
+	select BR2_PACKAGE_XLIB_LIBXPRESENT if BR2_PACKAGE_XORG7   # pixl
+	select BR2_PACKAGE_LIBDISPLAY_INFO # pixl for v0.40
 	help
 	  mpv is a fork of mplayer2 and MPlayer. It shares some features
 	  with the former projects while introducing many more.

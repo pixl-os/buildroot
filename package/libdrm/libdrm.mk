@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBDRM_VERSION = 2.4.124
+LIBDRM_VERSION = 2.4.131
 LIBDRM_SOURCE = libdrm-$(LIBDRM_VERSION).tar.xz
 LIBDRM_SITE = https://dri.freedesktop.org/libdrm
 LIBDRM_LICENSE = MIT
@@ -16,6 +16,11 @@ LIBDRM_DEPENDENCIES = \
 	host-pkgconf
 
 LIBDRM_CONF_OPTS = \
+	-Dcairo-tests=disabled \
+	-Dman-pages=disabled
+
+# pixl - add host package
+HOST_LIBDRM_CONF_OPTS = \
 	-Dcairo-tests=disabled \
 	-Dman-pages=disabled
 
@@ -116,25 +121,6 @@ else
 LIBDRM_CONF_OPTS += -Dtests=false
 endif
 
-HOST_LIBDRM_CONF_OPTS = \
-	-Damdgpu=disabled \
-	-Dcairo-tests=disabled \
-	-Detnaviv=disabled \
-	-Dexynos=disabled \
-	-Dfreedreno=disabled \
-	-Dfreedreno-kgsl=false \
-	-Dinstall-test-programs=false \
-	-Dintel=disabled \
-	-Dman-pages=disabled \
-	-Dnouveau=disabled \
-	-Domap=disabled \
-	-Dradeon=disabled \
-	-Dtegra=disabled \
-	-Dvc4=disabled \
-	-Dvmwgfx=disabled \
-	-Dtests=false \
-	-Dudev=false \
-	-Dvalgrind=disabled
-
 $(eval $(meson-package))
+# pixl - add host package
 $(eval $(host-meson-package))
