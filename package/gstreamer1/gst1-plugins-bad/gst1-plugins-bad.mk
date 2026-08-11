@@ -3,8 +3,8 @@
 # gst1-plugins-bad
 #
 ################################################################################
-
-GST1_PLUGINS_BAD_VERSION = 1.24.11
+# pixl - bump
+GST1_PLUGINS_BAD_VERSION = 1.26.6
 GST1_PLUGINS_BAD_SOURCE = gst-plugins-bad-$(GST1_PLUGINS_BAD_VERSION).tar.xz
 GST1_PLUGINS_BAD_SITE = https://gstreamer.freedesktop.org/src/gst-plugins-bad
 GST1_PLUGINS_BAD_INSTALL_STAGING = YES
@@ -26,15 +26,14 @@ GST1_PLUGINS_BAD_CONF_OPTS = \
 	-Dwinks=disabled \
 	-Dandroidmedia=disabled \
 	-Dapplemedia=disabled \
-	-Dgobject-cast-checks=disabled \
-	-Dglib-asserts=disabled \
-	-Dglib-checks=disabled \
+	-Dglib_debug=disabled \
+	-Dglib_assert=false \
+	-Dglib_checks=false \
 	-Dextra-checks=disabled \
 	-Ddoc=disabled
 
 # Options which require currently unpackaged libraries
 GST1_PLUGINS_BAD_CONF_OPTS += \
-	-Daja=disabled \
 	-Dasio=disabled \
 	-Davtp=disabled \
 	-Dopensles=disabled \
@@ -43,22 +42,17 @@ GST1_PLUGINS_BAD_CONF_OPTS += \
 	-Dbs2b=disabled \
 	-Dchromaprint=disabled \
 	-Dd3d11=disabled \
-	-Dd3d12=disabled \
 	-Ddc1394=disabled \
 	-Ddts=disabled \
-	-Ddwrite=disabled \
 	-Dresindvd=disabled \
 	-Dfaac=disabled \
 	-Dflite=disabled \
 	-Dgs=disabled \
 	-Dgsm=disabled \
-	-Dinsertbin=disabled \
 	-Dladspa=disabled \
-	-Dlc3=disabled \
 	-Dldac=disabled \
 	-Dlv2=disabled \
 	-Dmediafoundation=disabled \
-	-Dmse=disabled \
 	-Dmicrodns=disabled \
 	-Dlibde265=disabled \
 	-Dmodplug=disabled \
@@ -70,22 +64,15 @@ GST1_PLUGINS_BAD_CONF_OPTS += \
 	-Dwildmidi=disabled \
 	-Dsmoothstreaming=disabled \
 	-Dsoundtouch=disabled \
-	-Dsvtav1=disabled \
 	-Dgme=disabled \
 	-Dspandsp=disabled \
 	-Dsvthevcenc=disabled \
 	-Dtranscode=disabled \
-	-Dunixfd=disabled \
-	-Dudev=disabled \
-	-Duvcgadget=disabled \
-	-Dvulkan=disabled \
-	-Dx11=disabled \
 	-Dwasapi2=disabled \
 	-Dmagicleap=disabled \
 	-Disac=disabled \
 	-Diqa=disabled \
-	-Dopencv=disabled \
-	-Ddirectfb=disabled
+	-Dopencv=disabled
 
 GST1_PLUGINS_BAD_DEPENDENCIES = gst1-plugins-base gstreamer1
 
@@ -115,6 +102,22 @@ GST1_PLUGINS_BAD_DEPENDENCIES += bluez5_utils
 GST1_PLUGINS_BAD_CONF_OPTS += -Dbluez=enabled
 else
 GST1_PLUGINS_BAD_CONF_OPTS += -Dbluez=disabled
+endif
+
+# pixl
+ifeq ($(BR2_PACKAGE_LIBFREEAPTX),y)
+GST1_PLUGINS_BAD_DEPENDENCIES += libfreeaptx
+endif
+
+# pixl
+ifeq ($(BR2_PACKAGE_LIBLDAC),y)
+GST1_PLUGINS_BAD_DEPENDENCIES += libldac
+GST1_PLUGINS_BAD_CONF_OPTS += -Dldac=enabled
+endif
+
+# pixl
+ifeq ($(BR2_PACKAGE_LIBLC3),y)
+GST1_PLUGINS_BAD_DEPENDENCIES += liblc3
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_ACCURIP),y)
@@ -559,6 +562,13 @@ else
 GST1_PLUGINS_BAD_CONF_OPTS += -Ddecklink=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DIRECTFB),y)
+GST1_PLUGINS_BAD_CONF_OPTS += -Ddirectfb=enabled
+GST1_PLUGINS_BAD_DEPENDENCIES += directfb
+else
+GST1_PLUGINS_BAD_CONF_OPTS += -Ddirectfb=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DVB),y)
 GST1_PLUGINS_BAD_CONF_OPTS += -Ddvb=enabled
 GST1_PLUGINS_BAD_DEPENDENCIES += dtv-scan-tables
@@ -753,13 +763,10 @@ ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_VA),y)
 GST1_PLUGINS_BAD_CONF_OPTS += -Dva=enabled
 GST1_PLUGINS_BAD_DEPENDENCIES += libva
 ifeq ($(BR2_PACKAGE_LIBDRM),y)
-GST1_PLUGINS_BAD_CONF_OPTS += -Ddrm=enabled
 GST1_PLUGINS_BAD_DEPENDENCIES += libdrm
 endif
 else
-GST1_PLUGINS_BAD_CONF_OPTS += \
-	-Ddrm=disabled \
-	-Dva=disabled
+GST1_PLUGINS_BAD_CONF_OPTS += -Dva=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_VOAACENC),y)
