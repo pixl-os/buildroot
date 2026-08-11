@@ -4,20 +4,13 @@
 #
 ################################################################################
 
-SDL2_MIXER_VERSION = 2.6.3
+SDL2_MIXER_VERSION = 2.8.1
 SDL2_MIXER_SOURCE = SDL2_mixer-$(SDL2_MIXER_VERSION).tar.gz
 SDL2_MIXER_SITE = http://www.libsdl.org/projects/SDL_mixer/release
 SDL2_MIXER_LICENSE = Zlib
 SDL2_MIXER_LICENSE_FILES = LICENSE.txt
 SDL2_MIXER_INSTALL_STAGING = YES
 SDL2_MIXER_DEPENDENCIES = sdl2 host-pkgconf
-
-ifeq ($(BR2_PACKAGE_MPG123),y)
-SDL2_MIXER_CONF_OPTS += --enable-music-mp3
-SDL2_MIXER_DEPENDENCIES += mpg123
-else
-SDL2_MIXER_CONF_OPTS += --disable-music-flac
-endif
 
 ifeq ($(BR2_PACKAGE_FLAC),y)
 SDL2_MIXER_CONF_OPTS += --enable-music-flac
@@ -27,7 +20,7 @@ SDL2_MIXER_CONF_OPTS += --disable-music-flac
 endif
 
 ifeq ($(BR2_PACKAGE_FLUIDSYNTH),y)
-SDL2_MIXER_CONF_OPTS += --enable-music-midi-fluidsynth --disable-music-midi-timidity
+SDL2_MIXER_CONF_OPTS += --enable-music-midi-fluidsynth
 SDL2_MIXER_DEPENDENCIES += fluidsynth
 else
 SDL2_MIXER_CONF_OPTS += --disable-music-midi-fluidsynth
@@ -52,6 +45,17 @@ SDL2_MIXER_CONF_OPTS += --enable-music-ogg-tremor
 SDL2_MIXER_DEPENDENCIES += tremor
 else
 SDL2_MIXER_CONF_OPTS += --disable-music-ogg-tremor
+endif
+
+# pixl
+ifeq ($(BR2_PACKAGE_LIBMAD),y)
+SDL2_MIXER_CONF_OPTS += --enable-music-mp3-mad-gpl
+SDL2_MIXER_DEPENDENCIES += libmad
+endif
+
+# pixl
+ifeq ($(BR2_PACKAGE_LIBVORBIS),y)
+SDL2_MIXER_DEPENDENCIES += libvorbis
 endif
 
 $(eval $(autotools-package))
