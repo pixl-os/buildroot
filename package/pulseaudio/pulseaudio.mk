@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PULSEAUDIO_VERSION = 16.1
+PULSEAUDIO_VERSION = 17.0
 PULSEAUDIO_SOURCE = pulseaudio-$(PULSEAUDIO_VERSION).tar.xz
 PULSEAUDIO_SITE = https://freedesktop.org/software/pulseaudio/releases
 PULSEAUDIO_INSTALL_STAGING = YES
@@ -196,6 +196,15 @@ endef
 
 PULSEAUDIO_POST_INSTALL_TARGET_HOOKS += PULSEAUDIO_REMOVE_VALA \
 	PULSEAUDIO_REMOVE_CONSOLE_KIT
+
+# pixl - add the pactl util
+PULSEAUDIO_POST_INSTALL_TARGET_HOOKS += PULSEAUDIO_ADD_PACTL
+
+define PULSEAUDIO_ADD_PACTL
+	cp $(@D)/build/src/utils/pactl $(TARGET_DIR)/usr/bin/
+	ln -sf /usr/lib/pulseaudio/libpulsecommon-$(PULSEAUDIO_VERSION).so \
+	    $(TARGET_DIR)/usr/lib/libpulsecommon-$(PULSEAUDIO_VERSION).so
+endef
 
 ifeq ($(BR2_PACKAGE_PULSEAUDIO_DAEMON),y)
 define PULSEAUDIO_USERS
