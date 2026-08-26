@@ -33,4 +33,13 @@ else
 XTERM_CONF_OPTS += --without-xinerama
 endif
 
+# Newer binutils defaults to --as-needed, so libraries only pulled in
+# transitively (freetype via Xft, tinfo via ncursesw) are dropped from
+# the link unless listed explicitly. Patch the generated Makefile to
+# add them directly after configure has produced it.
+define XTERM_FIX_LINK_LIBS
+	$(SED) 's/-lXft /-lXft -lfreetype /; s/-lncursesw /-lncursesw -ltinfo /' $(@D)/Makefile
+endef
+XTERM_POST_CONFIGURE_HOOKS += XTERM_FIX_LINK_LIBS
+
 $(eval $(autotools-package))
