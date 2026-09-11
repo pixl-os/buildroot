@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBGDIPLUS_VERSION = 6.0.5
-LIBGDIPLUS_SITE = $(call github,mono,libgdiplus,$(LIBGDIPLUS_VERSION))
+LIBGDIPLUS_VERSION = 6.1
+LIBGDIPLUS_SITE = https://download.mono-project.com/sources/libgdiplus
 
 LIBGDIPLUS_LICENSE = MIT
 LIBGDIPLUS_LICENSE_FILES = LICENSE
@@ -16,7 +16,14 @@ LIBGDIPLUS_INSTALL_STAGING = YES
 # github tarball doesn't have configure
 LIBGDIPLUS_AUTORECONF = YES
 
-LIBGDIPLUS_DEPENDENCIES = xlib_libXft libglib2 cairo libpng host-pkgconf
+# pixl
+LIBGDIPLUS_DEPENDENCIES = libglib2 cairo libpng host-pkgconf
+ifeq ($(BR2_PACKAGE_XSERVER_XORG_SERVER),y)
+LIBGDIPLUS_DEPENDENCIES = xlib_libXft
+else
+LIBGDIPLUS_CONF_OPTS += --without-x11
+endif
+
 
 ifeq ($(BR2_PACKAGE_GIFLIB),y)
 LIBGDIPLUS_CONF_OPTS += --with-libgif
