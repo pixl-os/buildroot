@@ -32,6 +32,9 @@ LIBCURL_CONF_OPTS = \
 	--disable-ldap \
 	--disable-ldaps
 
+#pixl - to fix ca certificates access (libcurl, curl, pcsx2...)
+LIBCURL_CONF_OPTS += --with-ca-bundle=/etc/ssl/certs/ca-certificates.crt --with-ca-path=/etc/ssl/certs
+
 # Only affects Nest products.
 # https://nvd.nist.gov/vuln/detail/CVE-2024-32928
 LIBCURL_IGNORE_CVES += CVE-2024-32928
